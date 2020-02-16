@@ -2,4 +2,12 @@
     <string name="app_name">NearBy</string>
     <string name="place_name">Place Name</string>
     <string name="place_address">Place Address</string>
+
+    <!--    main_menu   -->
+    <string name="main_menu_realtime">Realtime</string>
+    <string name="main_menu_single_update">Single update</string>
+
+
+    <string name="no_connection_content">This image view to be viewed when there is no connection</string>
+
 </resources>

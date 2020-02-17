@@ -30,10 +30,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    // Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
-    //ButterKnife
+     //ButterKnife
     implementation 'com.jakewharton:butterknife:10.1.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
     //dexter permissions
@@ -49,8 +46,12 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     // GoogleFlexBox
     implementation 'com.google.android:flexbox:1.1.0'
-    // ZoomedImage - PhotoView
-    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
-    // PagerIndicator
-    implementation "ru.tinkoff.scrollingpagerindicator:scrollingpagerindicator:1.0.6"
+    //retrofit
+    implementation "com.squareup.retrofit2:retrofit:2.6.2"
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
+    // ViewModel and LiveData
+    def lifecycle_version = "2.1.0"
+    //noinspection GradleDependency
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+
 }

@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.assem.cognitev.nearby.Helper.PrefManager;
 import com.assem.cognitev.nearby.R;
 import com.assem.cognitev.nearby.Utils.BuildViews;
 
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private BuildViews buildViews;
     private PlacesAdapter placesAdapter;
     private PlacesViewModel placesViewModel;
+    private PrefManager prefManager;
 
     // Views
     @BindView(R.id.toolbar)
@@ -45,10 +47,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
+        prefManager = new PrefManager(this);
         buildViews = new BuildViews();
         placesAdapter = new PlacesAdapter(this);
         placesViewModel = ViewModelProviders.of(this).get(PlacesViewModel.class);
-        /*
+        if (prefManager.isRealtime())
+            Toast.makeText(this, "Realtime is clicked!", Toast.LENGTH_LONG).show();
+        else
+            Toast.makeText(this, "Single update is clicked!", Toast.LENGTH_LONG).show();
+
+  /*
         placesViewModel.getPosts();
         // setup recyclerView
         buildViews.setupLinearVerticalRecView(placesRecyclerView, this);
@@ -82,9 +90,11 @@ public class MainActivity extends AppCompatActivity {
         switch (id) {
             case R.id.menu_item_realtime:
                 Toast.makeText(this, "Realtime is clicked!", Toast.LENGTH_LONG).show();
+                prefManager.setRealtime(true);
                 return true;
             case R.id.menu_item_single_update:
                 Toast.makeText(this, "Single update is clicked!", Toast.LENGTH_LONG).show();
+                prefManager.setRealtime(false);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

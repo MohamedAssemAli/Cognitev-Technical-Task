@@ -13,6 +13,7 @@ import com.assem.cognitev.nearby.Models.PlaceModel;
 import com.assem.cognitev.nearby.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,11 +21,10 @@ import butterknife.ButterKnife;
 public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolder> {
 
     private Context context;
-    private ArrayList<PlaceModel> placeModelArrayList;
+    private ArrayList<PlaceModel> placeModelArrayList = new ArrayList<>();
 
-    public PlacesAdapter(Context context, ArrayList<PlaceModel> placeModelArrayList) {
+    public PlacesAdapter(Context context) {
         this.context = context;
-        this.placeModelArrayList = placeModelArrayList;
     }
 
     @NonNull
@@ -44,6 +44,11 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
     @Override
     public int getItemCount() {
         return placeModelArrayList.size();
+    }
+
+    public void setList(ArrayList<PlaceModel> placeModelArrayList) {
+        this.placeModelArrayList = placeModelArrayList;
+        notifyDataSetChanged();
     }
 
     class PlaceHolder extends RecyclerView.ViewHolder {

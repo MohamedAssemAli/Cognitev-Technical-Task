@@ -3,6 +3,8 @@ package com.assem.cognitev.nearby.Data;
 import com.assem.cognitev.nearby.App.AppConfig;
 import com.assem.cognitev.nearby.Models.PlaceModel;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -27,7 +29,7 @@ public class PlacesClient {
         return INSTANCE;
     }
 
-    public Call<PlaceModel> getPlaces(){
+    public Call<List<PlaceModel>> getPlaces(){
         return placeInterface.getPlaces();
     }
 }

@@ -35,7 +35,6 @@
 
         <TextView
             android:id="@+id/item_place_title"
-            style="@style/primary_text_bold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_padding_size_semi_micro"
@@ -46,7 +45,6 @@
 
         <TextView
             android:id="@+id/item_place_address"
-            style="@style/primary_text_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_padding_size_semi_micro"

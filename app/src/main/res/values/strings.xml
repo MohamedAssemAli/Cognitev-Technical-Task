@@ -10,4 +10,8 @@
 
     <string name="no_connection_content">This image view to be viewed when there is no connection</string>
 
+    <string name="rationale_location">This app needs access to your location to find nearby places.</string>
+
+
+
 </resources>

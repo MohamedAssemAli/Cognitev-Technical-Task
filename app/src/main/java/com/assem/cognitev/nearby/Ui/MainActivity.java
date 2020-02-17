@@ -1,11 +1,14 @@
 package com.assem.cognitev.nearby.Ui;
 
+import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
@@ -15,10 +18,14 @@ import com.assem.cognitev.nearby.Helper.PrefManager;
 import com.assem.cognitev.nearby.R;
 import com.assem.cognitev.nearby.Utils.BuildViews;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     private final String TAG = MainActivity.class.getSimpleName();
     // Vars
@@ -26,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private PlacesAdapter placesAdapter;
     private PlacesViewModel placesViewModel;
     private PrefManager prefManager;
+    private final int RC_LOCATION_PERM = 124;
+    String[] permissionsList = {Manifest.permission.ACCESS_FINE_LOCATION};
 
     // Views
     @BindView(R.id.toolbar)
@@ -78,12 +87,66 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // handle RunTimePermissions
+    private boolean hasPermissions() {
+        return EasyPermissions.hasPermissions(this, permissionsList);
+    }
+
+    private void getUserLatLan() {
+        if (hasPermissions()) {
+            Toast.makeText(this, "TODO: Location things", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Something wrong", Toast.LENGTH_SHORT).show();
+            // Ask for one permission
+            EasyPermissions.requestPermissions(
+                    this,
+                    getString(R.string.rationale_location),
+                    RC_LOCATION_PERM,
+                    Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        Log.d(TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
+        // (Optional) Check whether the user denied any permissions and checked "NEVER ASK AGAIN."
+        // This will display a dialog directing them to enable the permission in app settings.
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            new AppSettingsDialog.Builder(this).build().show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
+            if (hasPermissions()) {
+
+            }
+        }
+    }
+
+    // inflate mainMenu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
 
+    // handle mainMenu callBacks
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -100,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
 
 //    private void isConnected(boolean isConnected) {
 //        if (isConnected) {

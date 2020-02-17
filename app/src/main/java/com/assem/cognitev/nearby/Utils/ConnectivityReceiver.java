@@ -14,22 +14,16 @@ public class ConnectivityReceiver
         extends BroadcastReceiver {
 
     public static ConnectivityReceiverListener connectivityReceiverListener;
-    @SuppressLint("StaticFieldLeak")
-    static Context context;
 
-    public ConnectivityReceiver(Context context) {
+    public ConnectivityReceiver() {
         super();
-        ConnectivityReceiver.context = context;
     }
 
     @Override
     public void onReceive(Context context, Intent arg1) {
         ConnectivityManager cm = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = null;
-        if (cm != null) {
-            activeNetwork = cm.getActiveNetworkInfo();
-        }
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null
                 && activeNetwork.isConnectedOrConnecting();
 
@@ -40,12 +34,9 @@ public class ConnectivityReceiver
 
     public static boolean isConnected() {
         ConnectivityManager
-                cm = (ConnectivityManager) MyApplication.getInstance(context).getApplicationContext()
+                cm = (ConnectivityManager) MyApplication.getInstance().getApplicationContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = null;
-        if (cm != null) {
-            activeNetwork = cm.getActiveNetworkInfo();
-        }
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null
                 && activeNetwork.isConnectedOrConnecting();
     }

@@ -14,9 +14,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.assem.cognitev.nearby.App.MyApplication;
 import com.assem.cognitev.nearby.Helper.PrefManager;
 import com.assem.cognitev.nearby.R;
 import com.assem.cognitev.nearby.Utils.BuildViews;
+import com.assem.cognitev.nearby.Utils.ConnectivityReceiver;
 
 import java.util.List;
 
@@ -25,7 +27,9 @@ import butterknife.ButterKnife;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+public class MainActivity extends AppCompatActivity
+        implements EasyPermissions.PermissionCallbacks,
+        ConnectivityReceiver.ConnectivityReceiverListener {
 
     private final String TAG = MainActivity.class.getSimpleName();
     // Vars
@@ -53,6 +57,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
         init();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // register connection status listener
+        MyApplication.getInstance().setConnectivityListener(this);
     }
 
     private void init() {
@@ -165,16 +177,20 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
 
-//    private void isConnected(boolean isConnected) {
-//        if (isConnected) {
-//            noConnectionLayout.setVisibility(View.GONE);
-//        } else {
-//            noConnectionLayout.setVisibility(View.VISIBLE);
-//        }
-//    }
+    // Checking internet connection
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        if (!isConnected) {
+            //            noConnectionLayout.setVisibility(View.VISIBLE);
+            Toast.makeText(this, "No network connection!", Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(this, "Network connection is working!", Toast.LENGTH_LONG).show();
+            //            noConnectionLayout.setVisibility(View.GONE);
+        }
+    }
 
 
-    //    private void toggleLayout(boolean flag) {
+//    private void toggleLayout(boolean flag) {
 //        if (flag) {
 //            progressLayout.setVisibility(View.GONE);
 //            progressBar.hide();
@@ -190,5 +206,4 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 //            progressBar.show();
 //        }
 //    }
-
 }

@@ -33,4 +33,12 @@ public class PlacesClient {
     public Call<ArrayList<PlaceModel>> getPlaces(){
         return placeInterface.getPlaces();
     }
+
+        /*
+    https://api.foursquare.com/v2/venues/search?ll=40.7,-74&client_id=QI3JN03II2AEFXVUZWUWTDLUWBTRSHXJLPJDPWZ0V0QY2DA5&client_secret=JI23SHUX4JYSPJNLKDMYTZFEVSLBTX2KKVYVSTJKFBFIQKGZ&v=20200215
+     */
+
+    public Call<String> getResponse(){
+        return placeInterface.getResponse("40.7,-74","QI3JN03II2AEFXVUZWUWTDLUWBTRSHXJLPJDPWZ0V0QY2DA5","JI23SHUX4JYSPJNLKDMYTZFEVSLBTX2KKVYVSTJKFBFIQKGZ", "20200215");
+    }
 }

@@ -7,7 +7,6 @@ import com.assem.cognitev.nearby.Data.PlacesClient;
 import com.assem.cognitev.nearby.Models.PlaceModel;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -17,6 +16,10 @@ public class PlacesViewModel extends ViewModel {
 
     MutableLiveData<ArrayList<PlaceModel>> placesMutableLiveData = new MutableLiveData<>();
     MutableLiveData<String> posts = new MutableLiveData<>();
+
+    // test
+    MutableLiveData<String> responseAsString = new MutableLiveData<>();
+
 
     public void getPosts() {
         PlacesClient.getClient().getPlaces().enqueue(new Callback<ArrayList<PlaceModel>>() {
@@ -31,4 +34,20 @@ public class PlacesViewModel extends ViewModel {
             }
         });
     }
+
+    public void getResponse() {
+        PlacesClient.getClient().getResponse().enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                responseAsString.setValue(response.toString());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                posts.setValue("errr");
+            }
+        });
+    }
+
+
 }

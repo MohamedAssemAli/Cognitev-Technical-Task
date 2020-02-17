@@ -1,10 +1,12 @@
-package com.assem.cognitev.nearby;
+package com.assem.cognitev.nearby.Ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
+
+import com.assem.cognitev.nearby.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

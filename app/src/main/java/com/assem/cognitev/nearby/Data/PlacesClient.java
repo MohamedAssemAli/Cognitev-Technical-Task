@@ -31,7 +31,7 @@ public class PlacesClient {
     }
 
     public Call<ArrayList<PlaceModel>> getPlaces(){
-        return placeInterface.getPlaces();
+        return placeInterface.getPlaces("40.7,-74","QI3JN03II2AEFXVUZWUWTDLUWBTRSHXJLPJDPWZ0V0QY2DA5","JI23SHUX4JYSPJNLKDMYTZFEVSLBTX2KKVYVSTJKFBFIQKGZ", "20200215");
     }
 
         /*

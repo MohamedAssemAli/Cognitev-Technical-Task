@@ -2,9 +2,12 @@ package com.assem.cognitev.nearby.Ui;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,6 +25,9 @@ public class MainActivity extends AppCompatActivity {
     private PlacesAdapter placesAdapter;
     private PlacesViewModel placesViewModel;
 
+    // Views
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
     @BindView(R.id.main_activity_places_recycler)
     RecyclerView placesRecyclerView;
 
@@ -33,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
         init();
     }
 
@@ -62,6 +70,26 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.menu_item_realtime:
+                Toast.makeText(this, "Realtime is clicked!", Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.menu_item_single_update:
+                Toast.makeText(this, "Single update is clicked!", Toast.LENGTH_LONG).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 //    private void isConnected(boolean isConnected) {
 //        if (isConnected) {

@@ -2,10 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/nav_search"
+        android:id="@+id/menu_item_realtime"
         android:title="@string/main_menu_realtime" />
 
     <item
-        android:id="@+id/nav_cart"
+        android:id="@+id/menu_item_single_update"
         android:title="@string/main_menu_single_update" />
 </menu>

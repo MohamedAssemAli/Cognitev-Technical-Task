@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity
         MyApplication.getInstance().setConnectivityListener(this);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void init() {
         prefManager = new PrefManager(this);
         buildViews = new BuildViews();
@@ -97,13 +98,13 @@ public class MainActivity extends AppCompatActivity
         placesViewModel.itemsMutableLiveData.observe(this, new Observer<ArrayList<Item>>() {
             @Override
             public void onChanged(ArrayList<Item> items) {
-                Log.d(TAG, "init: venue =>" + items.get(0).getVenue().getName());
-                Log.d(TAG, "init: venue =>" + items.get(1).getVenue().getName());
-                Log.d(TAG, "init: venue =>" + items.get(2).getVenue().getName());
-                Log.d(TAG, "init: venue =>" + items.get(3).getVenue().getName());
+                Log.d(TAG, "init: venue =>" + items.get(0).getVenue());
                 placesAdapter.setList(items);
             }
         });
+
+        // get user location
+        isGpsEnabled();
     }
 
 

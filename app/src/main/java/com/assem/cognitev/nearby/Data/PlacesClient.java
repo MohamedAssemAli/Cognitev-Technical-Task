@@ -1,10 +1,7 @@
 package com.assem.cognitev.nearby.Data;
 
 import com.assem.cognitev.nearby.App.AppConfig;
-import com.assem.cognitev.nearby.Models.PlaceModel;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.JsonObject;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -30,15 +27,32 @@ public class PlacesClient {
         return INSTANCE;
     }
 
-    public Call<ArrayList<PlaceModel>> getPlaces(){
-        return placeInterface.getPlaces("29.978391, 30.954928","QI3JN03II2AEFXVUZWUWTDLUWBTRSHXJLPJDPWZ0V0QY2DA5","JI23SHUX4JYSPJNLKDMYTZFEVSLBTX2KKVYVSTJKFBFIQKGZ", "20200215");
+    public Call<JsonObject> getVenues() {
+        return placeInterface
+                .getV(
+                        AppConfig.ID,
+                        AppConfig.SECRET,
+                        "29.978391,30.954928",
+                        "500",
+                        "20200215");
     }
+
+    public Call<JsonObject> getV() {
+        return placeInterface
+                .getV(
+                        AppConfig.ID,
+                        AppConfig.SECRET,
+                        "29.978391,30.954928",
+                        "500",
+                        "20200215");
+    }
+
 
         /*
     https://api.foursquare.com/v2/venues/search?ll=40.7,-74&client_id=QI3JN03II2AEFXVUZWUWTDLUWBTRSHXJLPJDPWZ0V0QY2DA5&client_secret=JI23SHUX4JYSPJNLKDMYTZFEVSLBTX2KKVYVSTJKFBFIQKGZ&v=20200215
      */
 
-    public Call<String> getResponse(){
-        return placeInterface.getResponse("40.7,-74","QI3JN03II2AEFXVUZWUWTDLUWBTRSHXJLPJDPWZ0V0QY2DA5","JI23SHUX4JYSPJNLKDMYTZFEVSLBTX2KKVYVSTJKFBFIQKGZ", "20200215");
+    public Call<String> getResponse() {
+        return placeInterface.getResponse("40.7,-74", "QI3JN03II2AEFXVUZWUWTDLUWBTRSHXJLPJDPWZ0V0QY2DA5", "JI23SHUX4JYSPJNLKDMYTZFEVSLBTX2KKVYVSTJKFBFIQKGZ", "20200215");
     }
 }

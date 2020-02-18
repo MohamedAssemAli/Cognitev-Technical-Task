@@ -5,6 +5,11 @@ import androidx.lifecycle.ViewModel;
 
 import com.assem.cognitev.nearby.Data.PlacesClient;
 import com.assem.cognitev.nearby.Models.PlaceModel;
+import com.assem.cognitev.nearby.Models.Temp.Item;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 
@@ -14,40 +19,28 @@ import retrofit2.Response;
 
 public class PlacesViewModel extends ViewModel {
 
-    MutableLiveData<ArrayList<PlaceModel>> placesMutableLiveData = new MutableLiveData<>();
-    MutableLiveData<String> posts = new MutableLiveData<>();
+    private final String TAG = PlacesViewModel.class.getSimpleName();
 
-    // test
-    MutableLiveData<String> responseAsString = new MutableLiveData<>();
-
-
-    public void getPosts() {
-        PlacesClient.getClient().getPlaces().enqueue(new Callback<ArrayList<PlaceModel>>() {
+    MutableLiveData<ArrayList<Item>> itemsMutableLiveData = new MutableLiveData<>();
+    
+    public void getVenues() {
+        PlacesClient.getClient().getV().enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<ArrayList<PlaceModel>> call, Response<ArrayList<PlaceModel>> response) {
-                placesMutableLiveData.setValue(response.body());
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                JsonArray jsonArray = response.body()
+                        .getAsJsonObject("response")
+                        .getAsJsonArray("groups").get(0).getAsJsonObject()
+                        .getAsJsonArray("items");
+
+                ArrayList<Item> items = new Gson().fromJson(jsonArray.toString(), new TypeToken<ArrayList<Item>>() {
+                }.getType());
+                itemsMutableLiveData.setValue(items);
             }
 
             @Override
-            public void onFailure(Call<ArrayList<PlaceModel>> call, Throwable t) {
-                posts.setValue("errr");
-            }
-        });
-    }
+            public void onFailure(Call<JsonObject> call, Throwable t) {
 
-    public void getResponse() {
-        PlacesClient.getClient().getResponse().enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                responseAsString.setValue(response.toString());
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                posts.setValue("errr");
             }
         });
     }
-
-
 }

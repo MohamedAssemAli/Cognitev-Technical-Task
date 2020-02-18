@@ -22,6 +22,10 @@ https://api.foursquare.com/v2/venues/search?ll=29.978391, 30.954928&client_id=QI
     public static final String V = "v";
     public static final String RADIUS = "radius";
 
+    public static final String RESPONSE = "response";
+    public static final String GROUPS = "groups";
+    public static final String ITEMS = "items";
+    public static final String VENUE = "venue";
 
 }
 

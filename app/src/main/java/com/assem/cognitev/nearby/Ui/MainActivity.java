@@ -19,15 +19,18 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.assem.cognitev.nearby.App.MyApplication;
 import com.assem.cognitev.nearby.Helper.PrefManager;
+import com.assem.cognitev.nearby.Models.Temp.Item;
 import com.assem.cognitev.nearby.R;
 import com.assem.cognitev.nearby.Utils.BuildViews;
 import com.assem.cognitev.nearby.Utils.ConnectivityReceiver;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -86,27 +89,22 @@ public class MainActivity extends AppCompatActivity
         else
             Toast.makeText(this, "Single update is clicked!", Toast.LENGTH_LONG).show();
 
-  /*
-        placesViewModel.getPosts();
-        // setup recyclerView
+//        setup recyclerView
         buildViews.setupLinearVerticalRecView(placesRecyclerView, this);
         placesRecyclerView.setAdapter(placesAdapter);
         // setup viewModel
-        placesViewModel.placesMutableLiveData.observe(this, new Observer<ArrayList<PlaceModel>>() {
+        placesViewModel.getVenues();
+        placesViewModel.itemsMutableLiveData.observe(this, new Observer<ArrayList<Item>>() {
             @Override
-            public void onChanged(ArrayList<PlaceModel> postModels) {
-                placesAdapter.setList(postModels);
+            public void onChanged(ArrayList<Item> items) {
+                Log.d(TAG, "init: venue =>" + items.get(0).getVenue().getName());
+                Log.d(TAG, "init: venue =>" + items.get(1).getVenue().getName());
+                Log.d(TAG, "init: venue =>" + items.get(2).getVenue().getName());
+                Log.d(TAG, "init: venue =>" + items.get(3).getVenue().getName());
             }
         });
-         */
-
-
-        placesViewModel.getResponse();
-        placesViewModel.responseAsString.observe(this, s -> {
-            Log.i(TAG, "response -> ");
-            Log.i(TAG, "response -> " + s);
-        });
     }
+
 
     // GetCurrentUserLocation
     @RequiresApi(api = Build.VERSION_CODES.M)

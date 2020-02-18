@@ -151,6 +151,14 @@ public class MainActivity extends AppCompatActivity
             } else {
                 Toast.makeText(this, "Something wrong", Toast.LENGTH_SHORT).show();
             }
+        } else {
+            Toast.makeText(this, "Something wrong", Toast.LENGTH_SHORT).show();
+            // Ask for one permission
+            EasyPermissions.requestPermissions(
+                    this,
+                    getString(R.string.rationale_location),
+                    RC_LOCATION_PERM,
+                    Manifest.permission.ACCESS_FINE_LOCATION);
         }
     }
 
@@ -170,22 +178,7 @@ public class MainActivity extends AppCompatActivity
     private boolean hasPermissions() {
         return EasyPermissions.hasPermissions(this, permissionsList);
     }
-
-    private void getUserLatLan() {
-        if (hasPermissions()) {
-            Toast.makeText(this, "TODO: Location things", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, "Something wrong", Toast.LENGTH_SHORT).show();
-            // Ask for one permission
-            EasyPermissions.requestPermissions(
-                    this,
-                    getString(R.string.rationale_location),
-                    RC_LOCATION_PERM,
-                    Manifest.permission.ACCESS_FINE_LOCATION);
-        }
-    }
-
-
+    
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

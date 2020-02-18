@@ -1,14 +1,22 @@
 package com.assem.cognitev.nearby.Ui;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
@@ -38,7 +46,9 @@ public class MainActivity extends AppCompatActivity
     private PlacesViewModel placesViewModel;
     private PrefManager prefManager;
     private final int RC_LOCATION_PERM = 124;
-    String[] permissionsList = {Manifest.permission.ACCESS_FINE_LOCATION};
+    private String[] permissionsList = {Manifest.permission.ACCESS_FINE_LOCATION};
+    private LocationManager locationManager;
+    private Location latLan;
 
     // Views
     @BindView(R.id.toolbar)
@@ -62,7 +72,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-
         // register connection status listener
         MyApplication.getInstance().setConnectivityListener(this);
     }
@@ -98,6 +107,64 @@ public class MainActivity extends AppCompatActivity
             Log.i(TAG, "response -> " + s);
         });
     }
+
+    // GetCurrentUserLocation
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void isGpsEnabled() {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        // check if GPS is turned on
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            openGPS();
+        } else {
+            // GPS is already on
+            getLocation();
+        }
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void getLocation() {
+        if (hasPermissions()) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    Activity#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for Activity#requestPermissions for more details.
+                return;
+            }
+            Location locationGps = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Location locationNetwork = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            Location locationPassive = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+
+            if (locationGps != null) {
+                latLan = locationGps;
+                Log.d(TAG, "getLocation: latLan =>" + latLan.toString());
+            } else if (locationNetwork != null) {
+                latLan = locationNetwork;
+                Log.d(TAG, "getLocation: latLan =>" + latLan.toString());
+            } else if (locationPassive != null) {
+                latLan = locationPassive;
+                Log.d(TAG, "getLocation: latLan =>" + latLan.toString());
+            } else {
+                Toast.makeText(this, "Something wrong", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void openGPS() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.enable_gps).setCancelable(false).setPositiveButton(R.string.yes, (dialog, which) -> {
+            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+        }).setNegativeButton(R.string.no, (dialog, which) -> {
+            dialog.cancel();
+        });
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
 
     // handle RunTimePermissions
     private boolean hasPermissions() {
@@ -183,7 +250,7 @@ public class MainActivity extends AppCompatActivity
         if (!isConnected) {
             //            noConnectionLayout.setVisibility(View.VISIBLE);
             Toast.makeText(this, "No network connection!", Toast.LENGTH_LONG).show();
-        }else {
+        } else {
             Toast.makeText(this, "Network connection is working!", Toast.LENGTH_LONG).show();
             //            noConnectionLayout.setVisibility(View.GONE);
         }

@@ -3,8 +3,8 @@ package com.assem.cognitev.nearby.Ui;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.assem.cognitev.nearby.App.AppConfig;
 import com.assem.cognitev.nearby.Data.PlacesClient;
-import com.assem.cognitev.nearby.Models.PlaceModel;
 import com.assem.cognitev.nearby.Models.Temp.Item;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -28,9 +28,9 @@ public class PlacesViewModel extends ViewModel {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 JsonArray jsonArray = response.body()
-                        .getAsJsonObject("response")
-                        .getAsJsonArray("groups").get(0).getAsJsonObject()
-                        .getAsJsonArray("items");
+                        .getAsJsonObject(AppConfig.RESPONSE)
+                        .getAsJsonArray(AppConfig.GROUPS).get(0).getAsJsonObject()
+                        .getAsJsonArray(AppConfig.ITEMS);
 
                 ArrayList<Item> items = new Gson().fromJson(jsonArray.toString(), new TypeToken<ArrayList<Item>>() {
                 }.getType());

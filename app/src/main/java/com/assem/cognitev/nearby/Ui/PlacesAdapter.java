@@ -37,7 +37,8 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
     public void onBindViewHolder(@NonNull PlaceHolder holder, int position) {
         final Item itemModel = itemsArrayList.get(position);
         holder.placeTitle.setText(itemModel.getVenue().getName());
-        holder.placeAddress.setText(itemModel.getVenue().getCategories().get(0).getName() + " - " + itemModel.getVenue().getLocation().getFormattedAddress().toString());
+        holder.placeAddress.setText(itemModel.getVenue().getCategories().get(0).getName()
+                + " - " + itemModel.getVenue().getLocation().getFormattedAddress().toString());
     }
 
     @Override

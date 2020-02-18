@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity
     private boolean hasPermissions() {
         return EasyPermissions.hasPermissions(this, permissionsList);
     }
-    
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

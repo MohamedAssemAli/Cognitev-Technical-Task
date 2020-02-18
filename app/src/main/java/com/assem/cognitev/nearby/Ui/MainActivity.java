@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity
                 Log.d(TAG, "init: venue =>" + items.get(1).getVenue().getName());
                 Log.d(TAG, "init: venue =>" + items.get(2).getVenue().getName());
                 Log.d(TAG, "init: venue =>" + items.get(3).getVenue().getName());
+                placesAdapter.setList(items);
             }
         });
     }

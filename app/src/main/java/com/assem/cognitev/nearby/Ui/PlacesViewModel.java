@@ -22,7 +22,7 @@ public class PlacesViewModel extends ViewModel {
     private final String TAG = PlacesViewModel.class.getSimpleName();
 
     MutableLiveData<ArrayList<Item>> itemsMutableLiveData = new MutableLiveData<>();
-    
+
     public void getVenues() {
         PlacesClient.getClient().getV().enqueue(new Callback<JsonObject>() {
             @Override

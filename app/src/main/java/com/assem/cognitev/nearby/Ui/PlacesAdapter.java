@@ -9,11 +9,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.assem.cognitev.nearby.Models.PlaceModel;
+import com.assem.cognitev.nearby.Models.Temp.Item;
 import com.assem.cognitev.nearby.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,7 +20,7 @@ import butterknife.ButterKnife;
 public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolder> {
 
     private Context context;
-    private ArrayList<PlaceModel> placeModelArrayList = new ArrayList<>();
+    private ArrayList<Item> itemsArrayList = new ArrayList<>();
 
     public PlacesAdapter(Context context) {
         this.context = context;
@@ -36,18 +35,18 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
 
     @Override
     public void onBindViewHolder(@NonNull PlaceHolder holder, int position) {
-        final PlaceModel placeModel = placeModelArrayList.get(position);
-        holder.placeTitle.setText(placeModel.getTitle());
-        holder.placeAddress.setText(placeModel.getAddress());
+        final Item itemModel = itemsArrayList.get(position);
+        holder.placeTitle.setText(itemModel.getVenue().getName());
+        holder.placeAddress.setText(itemModel.getVenue().getCategories().get(0).getName() + " - " + itemModel.getVenue().getLocation().getFormattedAddress().toString());
     }
 
     @Override
     public int getItemCount() {
-        return placeModelArrayList.size();
+        return itemsArrayList.size();
     }
 
-    public void setList(ArrayList<PlaceModel> placeModelArrayList) {
-        this.placeModelArrayList = placeModelArrayList;
+    public void setList(ArrayList<Item> itemsArrayList) {
+        this.itemsArrayList = itemsArrayList;
         notifyDataSetChanged();
     }
 

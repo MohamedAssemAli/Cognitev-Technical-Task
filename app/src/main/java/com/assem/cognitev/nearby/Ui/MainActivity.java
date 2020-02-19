@@ -12,6 +12,9 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,18 +22,17 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.assem.cognitev.nearby.App.MyApplication;
 import com.assem.cognitev.nearby.Helper.PrefManager;
-import com.assem.cognitev.nearby.Models.Temp.Item;
 import com.assem.cognitev.nearby.R;
 import com.assem.cognitev.nearby.Utils.BuildViews;
 import com.assem.cognitev.nearby.Utils.ConnectivityReceiver;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -52,12 +54,20 @@ public class MainActivity extends AppCompatActivity
     private String[] permissionsList = {Manifest.permission.ACCESS_FINE_LOCATION};
     private LocationManager locationManager;
     private Location latLan;
+    private boolean isEmpty = false;
 
     // Views
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.main_activity_places_recycler)
     RecyclerView placesRecyclerView;
+    @BindView(R.id.no_data_found_layout)
+    LinearLayout noDataFoundLayout;
+    @BindView(R.id.progress_bar)
+    ContentLoadingProgressBar progressBar;
+    @BindView(R.id.progress_layout)
+    RelativeLayout progressLayout;
+
 
 //    @BindView(R.id.no_connection_layout)
 //    LinearLayout noConnectionLayout;
@@ -79,8 +89,8 @@ public class MainActivity extends AppCompatActivity
         MyApplication.getInstance().setConnectivityListener(this);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     private void init() {
+        toggleLayout(true);
         prefManager = new PrefManager(this);
         buildViews = new BuildViews();
         placesAdapter = new PlacesAdapter(this);
@@ -95,16 +105,19 @@ public class MainActivity extends AppCompatActivity
         placesRecyclerView.setAdapter(placesAdapter);
         // setup viewModel
         placesViewModel.getVenues();
-        placesViewModel.itemsMutableLiveData.observe(this, new Observer<ArrayList<Item>>() {
-            @Override
-            public void onChanged(ArrayList<Item> items) {
-                Log.d(TAG, "init: venue =>" + items.get(0).getVenue());
-                placesAdapter.setList(items);
-            }
+        placesViewModel.itemsMutableLiveData.observe(this, items -> {
+            Log.d(TAG, "init: venue =>" + items.get(0).getVenue());
+            placesAdapter.setList(items);
         });
 
+        placesViewModel.isEmptyMutableLiveData.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                isEmpty = aBoolean;
+            }
+        });
+        toggleLayout(false);
         // get user location
-        isGpsEnabled();
     }
 
 
@@ -250,20 +263,20 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-//    private void toggleLayout(boolean flag) {
-//        if (flag) {
-//            progressLayout.setVisibility(View.GONE);
-//            progressBar.hide();
-//            if (moreProductsArrayList.isEmpty()) {
-//                emptyRecyclerTxt.setVisibility(View.VISIBLE);
-//                moreSellerProductsImagesRecycler.setVisibility(View.GONE);
-//            } else {
-//                emptyRecyclerTxt.setVisibility(View.GONE);
-//                moreSellerProductsImagesRecycler.setVisibility(View.VISIBLE);
-//            }
-//        } else {
-//            progressLayout.setVisibility(View.VISIBLE);
-//            progressBar.show();
-//        }
-//    }
+    private void toggleLayout(boolean flag) {
+        if (flag) {
+            progressLayout.setVisibility(View.GONE);
+            progressBar.hide();
+            if (isEmpty) {
+                noDataFoundLayout.setVisibility(View.VISIBLE);
+                placesRecyclerView.setVisibility(View.GONE);
+            } else {
+                noDataFoundLayout.setVisibility(View.GONE);
+                placesRecyclerView.setVisibility(View.VISIBLE);
+            }
+        } else {
+            progressLayout.setVisibility(View.VISIBLE);
+            progressBar.show();
+        }
+    }
 }

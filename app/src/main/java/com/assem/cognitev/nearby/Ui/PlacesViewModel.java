@@ -22,6 +22,7 @@ public class PlacesViewModel extends ViewModel {
     private final String TAG = PlacesViewModel.class.getSimpleName();
 
     MutableLiveData<ArrayList<Item>> itemsMutableLiveData = new MutableLiveData<>();
+    MutableLiveData<Boolean> isEmptyMutableLiveData  = new MutableLiveData<>();
 
     public void getVenues() {
         PlacesClient.getClient().getV().enqueue(new Callback<JsonObject>() {
@@ -35,11 +36,12 @@ public class PlacesViewModel extends ViewModel {
                 ArrayList<Item> items = new Gson().fromJson(jsonArray.toString(), new TypeToken<ArrayList<Item>>() {
                 }.getType());
                 itemsMutableLiveData.setValue(items);
+                isEmptyMutableLiveData.setValue(false);
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-
+                isEmptyMutableLiveData.setValue(true);
             }
         });
     }

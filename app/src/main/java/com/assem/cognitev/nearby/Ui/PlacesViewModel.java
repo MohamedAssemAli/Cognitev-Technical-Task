@@ -1,5 +1,6 @@
 package com.assem.cognitev.nearby.Ui;
 
+import android.location.Location;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -26,29 +27,32 @@ public class PlacesViewModel extends ViewModel {
     MutableLiveData<ArrayList<Item>> itemsMutableLiveData = new MutableLiveData<>();
     MutableLiveData<Boolean> isEmptyMutableLiveData = new MutableLiveData<>();
 
-    public void getVenues() {
-        PlacesClient.getClient().getVenues().enqueue(new Callback<JsonObject>() {
-            @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                try {
-                    JsonArray jsonArray = response.body()
-                            .getAsJsonObject(AppConfig.RESPONSE)
-                            .getAsJsonArray(AppConfig.GROUPS).get(0).getAsJsonObject()
-                            .getAsJsonArray(AppConfig.ITEMS);
-                    ArrayList<Item> items = new Gson().fromJson(jsonArray.toString(), new TypeToken<ArrayList<Item>>() {
-                    }.getType());
-                    itemsMutableLiveData.setValue(items);
-                    isEmptyMutableLiveData.setValue(false);
-                } catch (Exception e) {
-                    Log.d(TAG, "onResponse: exception =>", e);
-                    isEmptyMutableLiveData.setValue(true);
-                }
-            }
+    public void getVenues(Location location) {
+        PlacesClient
+                .getClient()
+                .getVenues(location)
+                .enqueue(new Callback<JsonObject>() {
+                    @Override
+                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                        try {
+                            JsonArray jsonArray = response.body()
+                                    .getAsJsonObject(AppConfig.RESPONSE)
+                                    .getAsJsonArray(AppConfig.GROUPS).get(0).getAsJsonObject()
+                                    .getAsJsonArray(AppConfig.ITEMS);
+                            ArrayList<Item> items = new Gson().fromJson(jsonArray.toString(), new TypeToken<ArrayList<Item>>() {
+                            }.getType());
+                            itemsMutableLiveData.setValue(items);
+                            isEmptyMutableLiveData.setValue(false);
+                        } catch (Exception e) {
+                            Log.d(TAG, "onResponse: exception =>", e);
+                            isEmptyMutableLiveData.setValue(true);
+                        }
+                    }
 
-            @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
-                isEmptyMutableLiveData.setValue(true);
-            }
-        });
+                    @Override
+                    public void onFailure(Call<JsonObject> call, Throwable t) {
+                        isEmptyMutableLiveData.setValue(true);
+                    }
+                });
     }
 }

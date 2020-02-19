@@ -1,5 +1,7 @@
 package com.assem.cognitev.nearby.Data;
 
+import android.location.Location;
+
 import com.assem.cognitev.nearby.App.AppConfig;
 import com.google.gson.JsonObject;
 
@@ -27,12 +29,12 @@ public class PlacesClient {
         return INSTANCE;
     }
 
-    public Call<JsonObject> getVenues() {
+    public Call<JsonObject> getVenues(Location location) {
         return placeInterface
                 .getVenues(
                         AppConfig.ID,
                         AppConfig.SECRET,
-                        "29.978391,30.954928",
+                        location.getLatitude() + "," + location.getLongitude(),
                         "500",
                         "20200215");
     }

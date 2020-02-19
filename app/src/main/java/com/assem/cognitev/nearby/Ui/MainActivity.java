@@ -1,14 +1,9 @@
 package com.assem.cognitev.nearby.Ui;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,8 +13,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.ContentLoadingProgressBar;
@@ -32,6 +25,8 @@ import com.assem.cognitev.nearby.Helper.PrefManager;
 import com.assem.cognitev.nearby.R;
 import com.assem.cognitev.nearby.Utils.BuildViews;
 import com.assem.cognitev.nearby.Utils.ConnectivityReceiver;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 
 import java.util.List;
 
@@ -51,9 +46,8 @@ public class MainActivity extends AppCompatActivity
     private PlacesViewModel placesViewModel;
     private PrefManager prefManager;
     private final int RC_LOCATION_PERM = 124;
-    private String[] permissionsList = {Manifest.permission.ACCESS_FINE_LOCATION};
-    private LocationManager locationManager;
-    private Location latLan;
+    private String[] permissionsList = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+    private FusedLocationProviderClient fusedLocationClient;
     private boolean isEmpty = false;
 
     // Views
@@ -67,9 +61,6 @@ public class MainActivity extends AppCompatActivity
     ContentLoadingProgressBar progressBar;
     @BindView(R.id.progress_layout)
     RelativeLayout progressLayout;
-
-
-
 //    @BindView(R.id.no_connection_layout)
 //    LinearLayout noConnectionLayout;
 
@@ -94,6 +85,7 @@ public class MainActivity extends AppCompatActivity
         toggleLayout(false);
         prefManager = new PrefManager(this);
         buildViews = new BuildViews();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         placesAdapter = new PlacesAdapter(this);
         placesViewModel = ViewModelProviders.of(this).get(PlacesViewModel.class);
         if (prefManager.isRealtime())
@@ -101,17 +93,17 @@ public class MainActivity extends AppCompatActivity
         else
             Toast.makeText(this, "Single update is clicked!", Toast.LENGTH_LONG).show();
 
-//        setup recyclerView
+        // setup recyclerView
         buildViews.setupLinearVerticalRecView(placesRecyclerView, this);
         placesRecyclerView.setAdapter(placesAdapter);
+        // get user location
+        getLocation();
         // setup viewModel
-        placesViewModel.getVenues();
         placesViewModel.itemsMutableLiveData.observe(this, items -> {
             Log.d(TAG, "init: venue =>" + items.get(0).getVenue());
             placesAdapter.setList(items);
             toggleLayout(true);
         });
-
         placesViewModel.isEmptyMutableLiveData.observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
@@ -119,25 +111,9 @@ public class MainActivity extends AppCompatActivity
                 toggleLayout(true);
             }
         });
-        // get user location
     }
-
 
     // GetCurrentUserLocation
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void isGpsEnabled() {
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        // check if GPS is turned on
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            openGPS();
-        } else {
-            // GPS is already on
-            getLocation();
-        }
-
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
     private void getLocation() {
         if (hasPermissions()) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -150,22 +126,18 @@ public class MainActivity extends AppCompatActivity
                 // for Activity#requestPermissions for more details.
                 return;
             }
-            Location locationGps = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            Location locationNetwork = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            Location locationPassive = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-
-            if (locationGps != null) {
-                latLan = locationGps;
-                Log.d(TAG, "getLocation: latLan =>" + latLan.toString());
-            } else if (locationNetwork != null) {
-                latLan = locationNetwork;
-                Log.d(TAG, "getLocation: latLan =>" + latLan.toString());
-            } else if (locationPassive != null) {
-                latLan = locationPassive;
-                Log.d(TAG, "getLocation: latLan =>" + latLan.toString());
-            } else {
-                Toast.makeText(this, "Something wrong", Toast.LENGTH_SHORT).show();
-            }
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, location -> {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                            Log.d(TAG, "getLocation: location =>" + location.getLatitude() + " - " + location.getLongitude());
+//                            latLong = location;
+                            placesViewModel.getVenues(location);
+                        } else {
+                            isEmpty = true;
+                        }
+                    });
         } else {
             Toast.makeText(this, "Something wrong", Toast.LENGTH_SHORT).show();
             // Ask for one permission
@@ -174,20 +146,9 @@ public class MainActivity extends AppCompatActivity
                     getString(R.string.rationale_location),
                     RC_LOCATION_PERM,
                     Manifest.permission.ACCESS_FINE_LOCATION);
+            isEmpty = true;
         }
     }
-
-    private void openGPS() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.enable_gps).setCancelable(false).setPositiveButton(R.string.yes, (dialog, which) -> {
-            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-        }).setNegativeButton(R.string.no, (dialog, which) -> {
-            dialog.cancel();
-        });
-        final AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }
-
 
     // handle RunTimePermissions
     private boolean hasPermissions() {
@@ -221,7 +182,7 @@ public class MainActivity extends AppCompatActivity
 
         if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
             if (hasPermissions()) {
-
+                getLocation();
             }
         }
     }
@@ -251,7 +212,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     // Checking internet connection
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
@@ -265,6 +225,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    // handle data loading and no data retrieved
     private void toggleLayout(boolean flag) {
         if (flag) {
             progressLayout.setVisibility(View.GONE);

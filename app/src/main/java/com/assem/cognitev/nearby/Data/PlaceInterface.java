@@ -21,13 +21,6 @@ https://api.foursquare.com/v2/venues/search?ll=40.7,-74&client_id=QI3JN03II2AEFX
              @Query(AppConfig.RADIUS) String radius,
              @Query(AppConfig.V) String date);
 
-    @GET("venues/explore")
-    public Call<JsonObject> getV
-            (@Query(AppConfig.CLIENT_ID) String clientId,
-             @Query(AppConfig.CLIENT_SECRET) String clientSecret,
-             @Query(AppConfig.LL) String lat,
-             @Query(AppConfig.RADIUS) String radius,
-             @Query(AppConfig.V) String date);
 
     @GET("search")
     public Call<String> getResponse(@Query(AppConfig.LL) String lat,

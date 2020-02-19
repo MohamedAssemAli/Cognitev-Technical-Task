@@ -26,8 +26,9 @@
             android:visibility="gone" />
 
         <include
-            android:id="@+id/progress_bar"
+            android:id="@+id/progress_layout"
             layout="@layout/progressbar_layout"
             android:visibility="gone" />
+
     </FrameLayout>
 </LinearLayout>

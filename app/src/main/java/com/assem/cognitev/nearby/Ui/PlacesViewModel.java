@@ -1,5 +1,7 @@
 package com.assem.cognitev.nearby.Ui;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -22,21 +24,25 @@ public class PlacesViewModel extends ViewModel {
     private final String TAG = PlacesViewModel.class.getSimpleName();
 
     MutableLiveData<ArrayList<Item>> itemsMutableLiveData = new MutableLiveData<>();
-    MutableLiveData<Boolean> isEmptyMutableLiveData  = new MutableLiveData<>();
+    MutableLiveData<Boolean> isEmptyMutableLiveData = new MutableLiveData<>();
 
     public void getVenues() {
-        PlacesClient.getClient().getV().enqueue(new Callback<JsonObject>() {
+        PlacesClient.getClient().getVenues().enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                JsonArray jsonArray = response.body()
-                        .getAsJsonObject(AppConfig.RESPONSE)
-                        .getAsJsonArray(AppConfig.GROUPS).get(0).getAsJsonObject()
-                        .getAsJsonArray(AppConfig.ITEMS);
-
-                ArrayList<Item> items = new Gson().fromJson(jsonArray.toString(), new TypeToken<ArrayList<Item>>() {
-                }.getType());
-                itemsMutableLiveData.setValue(items);
-                isEmptyMutableLiveData.setValue(false);
+                try {
+                    JsonArray jsonArray = response.body()
+                            .getAsJsonObject(AppConfig.RESPONSE)
+                            .getAsJsonArray(AppConfig.GROUPS).get(0).getAsJsonObject()
+                            .getAsJsonArray(AppConfig.ITEMS);
+                    ArrayList<Item> items = new Gson().fromJson(jsonArray.toString(), new TypeToken<ArrayList<Item>>() {
+                    }.getType());
+                    itemsMutableLiveData.setValue(items);
+                    isEmptyMutableLiveData.setValue(false);
+                } catch (Exception e) {
+                    Log.d(TAG, "onResponse: exception =>", e);
+                    isEmptyMutableLiveData.setValue(true);
+                }
             }
 
             @Override

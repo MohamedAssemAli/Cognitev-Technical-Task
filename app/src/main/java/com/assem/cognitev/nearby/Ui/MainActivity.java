@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity
     RelativeLayout progressLayout;
 
 
+
 //    @BindView(R.id.no_connection_layout)
 //    LinearLayout noConnectionLayout;
 
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void init() {
-        toggleLayout(true);
+        toggleLayout(false);
         prefManager = new PrefManager(this);
         buildViews = new BuildViews();
         placesAdapter = new PlacesAdapter(this);
@@ -108,15 +109,16 @@ public class MainActivity extends AppCompatActivity
         placesViewModel.itemsMutableLiveData.observe(this, items -> {
             Log.d(TAG, "init: venue =>" + items.get(0).getVenue());
             placesAdapter.setList(items);
+            toggleLayout(true);
         });
 
         placesViewModel.isEmptyMutableLiveData.observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 isEmpty = aBoolean;
+                toggleLayout(true);
             }
         });
-        toggleLayout(false);
         // get user location
     }
 

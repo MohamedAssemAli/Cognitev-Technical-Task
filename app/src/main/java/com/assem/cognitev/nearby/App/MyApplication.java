@@ -1,7 +1,6 @@
 package com.assem.cognitev.nearby.App;
 
 import android.app.Application;
-import android.content.Context;
 
 import com.assem.cognitev.nearby.Utils.ConnectivityReceiver;
 

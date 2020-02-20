@@ -30,5 +30,10 @@
             layout="@layout/progressbar_layout"
             android:visibility="gone" />
 
+        <include
+            android:id="@+id/something_went_wrong_layout"
+            layout="@layout/something_went_wrong_layout"
+            android:visibility="gone" />
+
     </FrameLayout>
 </LinearLayout>

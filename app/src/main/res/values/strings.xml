@@ -15,6 +15,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="no_data_found">No data found</string>
-
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="check_your_connection">Check your connection!</string>
 
 </resources>

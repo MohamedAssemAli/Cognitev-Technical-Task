@@ -13,17 +13,24 @@ import com.assem.cognitev.nearby.App.MyApplication;
 public class ConnectivityReceiver
         extends BroadcastReceiver {
 
-    public static ConnectivityReceiverListener connectivityReceiverListener;
 
-    public ConnectivityReceiver() {
+    public static ConnectivityReceiverListener connectivityReceiverListener;
+    @SuppressLint("StaticFieldLeak")
+    static Context context;
+
+    public ConnectivityReceiver(Context context) {
         super();
+        ConnectivityReceiver.context = context;
     }
 
     @Override
     public void onReceive(Context context, Intent arg1) {
         ConnectivityManager cm = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        NetworkInfo activeNetwork = null;
+        if (cm != null) {
+            activeNetwork = cm.getActiveNetworkInfo();
+        }
         boolean isConnected = activeNetwork != null
                 && activeNetwork.isConnectedOrConnecting();
 
@@ -36,7 +43,10 @@ public class ConnectivityReceiver
         ConnectivityManager
                 cm = (ConnectivityManager) MyApplication.getInstance().getApplicationContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        NetworkInfo activeNetwork = null;
+        if (cm != null) {
+            activeNetwork = cm.getActiveNetworkInfo();
+        }
         return activeNetwork != null
                 && activeNetwork.isConnectedOrConnecting();
     }

@@ -2,7 +2,9 @@ package com.assem.cognitev.nearby.Ui;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -61,8 +63,8 @@ public class MainActivity extends AppCompatActivity
     ContentLoadingProgressBar progressBar;
     @BindView(R.id.progress_layout)
     RelativeLayout progressLayout;
-//    @BindView(R.id.no_connection_layout)
-//    LinearLayout noConnectionLayout;
+    @BindView(R.id.something_went_wrong_layout)
+    LinearLayout somethingWrongLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,10 +79,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        // register connection status listener
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        ConnectivityReceiver connectivityReceiver = new ConnectivityReceiver(this);
+        registerReceiver(connectivityReceiver, intentFilter);
+        /*register connection status listener*/
         MyApplication.getInstance().setConnectivityListener(this);
     }
-
+    
     private void init() {
         toggleLayout(false);
         prefManager = new PrefManager(this);
@@ -97,7 +103,7 @@ public class MainActivity extends AppCompatActivity
         buildViews.setupLinearVerticalRecView(placesRecyclerView, this);
         placesRecyclerView.setAdapter(placesAdapter);
         // get user location
-        getLocation();
+//        getLocation();
         // setup viewModel
         placesViewModel.itemsMutableLiveData.observe(this, items -> {
             Log.d(TAG, "init: venue =>" + items.get(0).getVenue());
@@ -182,7 +188,7 @@ public class MainActivity extends AppCompatActivity
 
         if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
             if (hasPermissions()) {
-                getLocation();
+//                getLocation();
             }
         }
     }
@@ -212,20 +218,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    // Checking internet connection
-    @Override
-    public void onNetworkConnectionChanged(boolean isConnected) {
-        if (!isConnected) {
-            //            noConnectionLayout.setVisibility(View.VISIBLE);
-            Toast.makeText(this, "No network connection!", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, "Network connection is working!", Toast.LENGTH_LONG).show();
-            //            noConnectionLayout.setVisibility(View.GONE);
-        }
-    }
-
-
-    // handle data loading and no data retrieved
+    // handle data retrieving & rendering / no data retrieved
     private void toggleLayout(boolean flag) {
         if (flag) {
             progressLayout.setVisibility(View.GONE);
@@ -240,6 +233,28 @@ public class MainActivity extends AppCompatActivity
         } else {
             progressLayout.setVisibility(View.VISIBLE);
             progressBar.show();
+        }
+    }
+
+    // Checking internet connection
+    /**
+     * Callback will be triggered when there is change in
+     * network connection
+     */
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        isConnected(isConnected);
+    }
+
+    // handle network status changing
+    private void isConnected(boolean isConnected) {
+        if (isConnected) {
+            somethingWrongLayout.setVisibility(View.GONE);
+            Log.d(TAG, "onNetworkConnectionChanged: true");
+        } else {
+            Toast.makeText(this, R.string.check_your_connection, Toast.LENGTH_LONG).show();
+            Log.d(TAG, "onNetworkConnectionChanged: No network connection!");
+            somethingWrongLayout.setVisibility(View.VISIBLE);
         }
     }
 }

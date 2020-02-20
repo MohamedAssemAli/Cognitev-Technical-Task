@@ -3,14 +3,28 @@ package com.assem.cognitev.nearby.App;
 public class AppConfig {
 
     // END_POINTS
-    /*
-https://api.foursquare.com/v2/venues/search?ll=29.978391, 30.954928&client_id=QI3JN03II2AEFXVUZWUWTDLUWBTRSHXJLPJDPWZ0V0QY2DA5&client_secret=JI23SHUX4JYSPJNLKDMYTZFEVSLBTX2KKVYVSTJKFBFIQKGZhttps://api.foursquare.com/v2/venues/search?ll=40.7,-74&client_id=QI3JN03II2AEFXVUZWUWTDLUWBTRSHXJLPJDPWZ0V0QY2DA5&client_secret=JI23SHUX4JYSPJNLKDMYTZFEVSLBTX2KKVYVSTJKFBFIQKGZ&v=20200215&radius=500
 
-     https://api.foursquare.com/v2/venues/explore?ll=29.978391,30.954928
+    // Explore end point
+    /*
+     https://api.foursquare.com/v2/venues/explore?
+     ll=29.978391,30.954928
      &client_id=QI3JN03II2AEFXVUZWUWTDLUWBTRSHXJLPJDPWZ0V0QY2DA5
      &client_secret=JI23SHUX4JYSPJNLKDMYTZFEVSLBTX2KKVYVSTJKFBFIQKGZ
      &v=20200215
      &radius=500
+     */
+
+    // Photos end point
+    /*
+    https://api.foursquare.com/v2/venues/{venue_id}/photos?
+    client_id=QI3JN03II2AEFXVUZWUWTDLUWBTRSHXJLPJDPWZ0V0QY2DA5
+    &client_secret=JI23SHUX4JYSPJNLKDMYTZFEVSLBTX2KKVYVSTJKFBFIQKGZ
+    &v=20200215
+
+     */
+    // photo url
+    /*
+    https://fastly.4sqi.net/img/general/720x540/3871084_dyOWRHNigS0wzBIyA9H91CuoO8JAkmjTCoyU8EFLw4U.jpg
      */
 
     public static final String BASE_URL = "https://api.foursquare.com/v2/";

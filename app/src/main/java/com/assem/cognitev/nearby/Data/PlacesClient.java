@@ -38,9 +38,4 @@ public class PlacesClient {
                         "500",
                         "20200215");
     }
-
-
-    public Call<String> getResponse() {
-        return placeInterface.getResponse("40.7,-74", "QI3JN03II2AEFXVUZWUWTDLUWBTRSHXJLPJDPWZ0V0QY2DA5", "JI23SHUX4JYSPJNLKDMYTZFEVSLBTX2KKVYVSTJKFBFIQKGZ", "20200215");
-    }
 }

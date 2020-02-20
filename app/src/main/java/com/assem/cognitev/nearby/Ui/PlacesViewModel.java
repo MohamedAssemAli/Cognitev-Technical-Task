@@ -42,7 +42,10 @@ public class PlacesViewModel extends ViewModel {
                             ArrayList<Item> items = new Gson().fromJson(jsonArray.toString(), new TypeToken<ArrayList<Item>>() {
                             }.getType());
                             itemsMutableLiveData.setValue(items);
-                            isEmptyMutableLiveData.setValue(false);
+                            if (jsonArray.size() == 0)
+                                isEmptyMutableLiveData.setValue(false);
+                            else
+                                isEmptyMutableLiveData.setValue(true);
                         } catch (Exception e) {
                             Log.d(TAG, "onResponse: exception =>", e);
                             isEmptyMutableLiveData.setValue(true);

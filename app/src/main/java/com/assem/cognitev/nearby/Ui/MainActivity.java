@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity
         /*register connection status listener*/
         MyApplication.getInstance().setConnectivityListener(this);
     }
-    
+
     private void init() {
         toggleLayout(false);
         prefManager = new PrefManager(this);

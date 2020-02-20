@@ -1,4 +1,4 @@
-package com.assem.cognitev.nearby.Ui;
+package com.assem.cognitev.nearby.UI;
 
 import android.location.Location;
 import android.util.Log;

@@ -3,6 +3,8 @@ package com.assem.cognitev.nearby.Helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.assem.cognitev.nearby.Models.Temp.Location;
+
 public class PrefManager {
 
     // LogCat tag
@@ -17,6 +19,7 @@ public class PrefManager {
     private static final String PREF_NAME = "NearByApp";
     // Keys
     private static final String KEY_IS_REALTIME = "isRealtime";
+    private static final String KEY_LAST_SAVED_LOCATION = "last_saved_location";
 
     public PrefManager(Context context) {
         this.context = context;
@@ -31,6 +34,11 @@ public class PrefManager {
 
     public boolean isRealtime() {
         return pref.getBoolean(KEY_IS_REALTIME, true);
+    }
+
+    public void setLastSavedLocation(Location location) {
+        editor.putString(KEY_IS_REALTIME, location.toString());
+        editor.commit();
     }
 }
 

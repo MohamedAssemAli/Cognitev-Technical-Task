@@ -1,4 +1,4 @@
-package com.assem.cognitev.nearby.Ui;
+package com.assem.cognitev.nearby.UI;
 
 import android.content.Context;
 import android.view.LayoutInflater;

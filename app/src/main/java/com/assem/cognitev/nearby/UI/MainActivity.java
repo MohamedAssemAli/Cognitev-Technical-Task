@@ -1,11 +1,13 @@
-package com.assem.cognitev.nearby.Ui;
+package com.assem.cognitev.nearby.UI;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +30,9 @@ import com.assem.cognitev.nearby.R;
 import com.assem.cognitev.nearby.Utils.BuildViews;
 import com.assem.cognitev.nearby.Utils.ConnectivityReceiver;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.List;
@@ -50,6 +55,7 @@ public class MainActivity extends AppCompatActivity
     private final int RC_LOCATION_PERM = 124;
     private String[] permissionsList = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
     private FusedLocationProviderClient fusedLocationClient;
+    LocationRequest locationRequest;
     private boolean isEmpty = false;
 
     // Views
@@ -92,6 +98,15 @@ public class MainActivity extends AppCompatActivity
         prefManager = new PrefManager(this);
         buildViews = new BuildViews();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        locationRequest = new LocationRequest()
+                .setInterval(5000)
+                .setFastestInterval(5000)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+
+        temp();
+
         placesAdapter = new PlacesAdapter(this);
         placesViewModel = ViewModelProviders.of(this).get(PlacesViewModel.class);
         if (prefManager.isRealtime())
@@ -103,7 +118,7 @@ public class MainActivity extends AppCompatActivity
         buildViews.setupLinearVerticalRecView(placesRecyclerView, this);
         placesRecyclerView.setAdapter(placesAdapter);
         // get user location
-//        getLocation();
+        getLocation();
         // setup viewModel
         placesViewModel.itemsMutableLiveData.observe(this, items -> {
             Log.d(TAG, "init: venue =>" + items.get(0).getVenue());
@@ -140,6 +155,7 @@ public class MainActivity extends AppCompatActivity
                             Log.d(TAG, "getLocation: location =>" + location.getLatitude() + " - " + location.getLongitude());
 //                            latLong = location;
                             placesViewModel.getVenues(location);
+
                         } else {
                             isEmpty = true;
                         }
@@ -154,6 +170,34 @@ public class MainActivity extends AppCompatActivity
                     Manifest.permission.ACCESS_FINE_LOCATION);
             isEmpty = true;
         }
+    }
+
+    private LocationCallback locationCallback;
+
+    private void startLocationUpdates() {
+
+    }
+
+    private void temp() {
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    // Update UI with location data
+                    // ...
+                    Log.d(TAG, "onLocationResult: new location =>" + location.getLatitude() + " - " + location.getLongitude());
+                }
+            }
+
+            ;
+        };
+        fusedLocationClient.requestLocationUpdates(locationRequest,
+                locationCallback,
+                Looper.getMainLooper());
     }
 
     // handle RunTimePermissions
@@ -188,7 +232,7 @@ public class MainActivity extends AppCompatActivity
 
         if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
             if (hasPermissions()) {
-//                getLocation();
+                getLocation();
             }
         }
     }
@@ -237,6 +281,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     // Checking internet connection
+
     /**
      * Callback will be triggered when there is change in
      * network connection

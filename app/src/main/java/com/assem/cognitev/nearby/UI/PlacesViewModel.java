@@ -47,7 +47,7 @@ public class PlacesViewModel extends ViewModel {
                             else
                                 isEmptyMutableLiveData.setValue(false);
                         } catch (Exception e) {
-                            Log.d(TAG, "onResponse: exception =>", e);
+                            Log.d(TAG, "onResponse: exception =>" + e.getMessage());
                             isEmptyMutableLiveData.setValue(true);
                         }
                     }

@@ -20,7 +20,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.ContentLoadingProgressBar;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,17 +46,22 @@ public class MainActivity extends AppCompatActivity
         ConnectivityReceiver.ConnectivityReceiverListener {
 
     private final String TAG = MainActivity.class.getSimpleName();
-    // Vars
+    // instances
     private BuildViews buildViews;
     private PlacesAdapter placesAdapter;
     private PlacesViewModel placesViewModel;
+    // pref instances
     private PrefManager prefManager;
+    // location module
     private final int RC_LOCATION_PERM = 124;
     private String[] permissionsList = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
     private FusedLocationProviderClient fusedLocationClient;
-    LocationRequest locationRequest;
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
+    private long UPDATE_INTERVAL = 10 * 1000;  /* 60 secs */
+    private long FASTEST_INTERVAL = 1000; /* 2 sec */
+    // vars
     private boolean isEmpty = false;
-
     // Views
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -85,6 +89,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         ConnectivityReceiver connectivityReceiver = new ConnectivityReceiver(this);
@@ -94,57 +99,48 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void init() {
+        // show progressBar on app start
         toggleLayout(false);
+        // Initialize instances
         prefManager = new PrefManager(this);
         buildViews = new BuildViews();
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        locationRequest = new LocationRequest()
-                .setInterval(5000)
-                .setFastestInterval(5000)
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-
-        temp();
-
         placesAdapter = new PlacesAdapter(this);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         placesViewModel = ViewModelProviders.of(this).get(PlacesViewModel.class);
-        if (prefManager.isRealtime())
-            Toast.makeText(this, "Realtime is clicked!", Toast.LENGTH_LONG).show();
-        else
-            Toast.makeText(this, "Single update is clicked!", Toast.LENGTH_LONG).show();
-
         // setup recyclerView
         buildViews.setupLinearVerticalRecView(placesRecyclerView, this);
         placesRecyclerView.setAdapter(placesAdapter);
+
         // get user location
         getLocation();
+
+        // get user pref
+        if (prefManager.isRealtime()) {
+            // do Realtime mode work
+            startLocationChangeListner();
+        } else {
+            // do single update mode work
+            //        fusedLocationClient.removeLocationUpdates(locationCallback);
+        }
+
+
         // setup viewModel
         placesViewModel.itemsMutableLiveData.observe(this, items -> {
             Log.d(TAG, "init: venue =>" + items.get(0).getVenue());
             placesAdapter.setList(items);
             toggleLayout(true);
         });
-        placesViewModel.isEmptyMutableLiveData.observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                isEmpty = aBoolean;
-                toggleLayout(true);
-            }
+        placesViewModel.isEmptyMutableLiveData.observe(this, aBoolean -> {
+            Log.d(TAG, "init: isEmpty => " + aBoolean);
+            isEmpty = aBoolean;
+            toggleLayout(true);
         });
     }
 
-    // GetCurrentUserLocation
+    // get current user location
     private void getLocation() {
         if (hasPermissions()) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    Activity#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for Activity#requestPermissions for more details.
                 return;
             }
             fusedLocationClient.getLastLocation()
@@ -153,9 +149,8 @@ public class MainActivity extends AppCompatActivity
                         if (location != null) {
                             // Logic to handle location object
                             Log.d(TAG, "getLocation: location =>" + location.getLatitude() + " - " + location.getLongitude());
-//                            latLong = location;
-                            placesViewModel.getVenues(location);
-
+                            getNearByVenues(location);
+                            prefManager.setLastSavedLocation(location);
                         } else {
                             isEmpty = true;
                         }
@@ -172,13 +167,16 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private LocationCallback locationCallback;
-
-    private void startLocationUpdates() {
-
+    // call ViewModel actions
+    private void getNearByVenues(Location location) {
+        placesViewModel.getVenues(location);
     }
 
-    private void temp() {
+    private void startLocationChangeListner() {
+        locationRequest = new LocationRequest()
+                .setInterval(UPDATE_INTERVAL)
+                .setFastestInterval(FASTEST_INTERVAL)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         locationCallback = new LocationCallback() {
             @Override
@@ -190,6 +188,12 @@ public class MainActivity extends AppCompatActivity
                     // Update UI with location data
                     // ...
                     Log.d(TAG, "onLocationResult: new location =>" + location.getLatitude() + " - " + location.getLongitude());
+                    Location lastSaveLocation = prefManager.getLastSavedLocation();
+                    if (isDistanceChanged(lastSaveLocation, location)) {
+                        getNearByVenues(location);
+                        prefManager.setLastSavedLocation(location);
+//                        toggleLayout(false);
+                    }
                 }
             }
 
@@ -200,11 +204,16 @@ public class MainActivity extends AppCompatActivity
                 Looper.getMainLooper());
     }
 
+    private boolean isDistanceChanged(Location oldLocation, Location newLocation) {
+        return oldLocation.distanceTo(newLocation) >= 500;
+    }
+
     // handle RunTimePermissions
     private boolean hasPermissions() {
         return EasyPermissions.hasPermissions(this, permissionsList);
     }
 
+    // EasyPermissions callbacks
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -250,11 +259,11 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         switch (id) {
             case R.id.menu_item_realtime:
-                Toast.makeText(this, "Realtime is clicked!", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Realtime mode started!", Toast.LENGTH_LONG).show();
                 prefManager.setRealtime(true);
                 return true;
             case R.id.menu_item_single_update:
-                Toast.makeText(this, "Single update is clicked!", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Single update mode started!", Toast.LENGTH_LONG).show();
                 prefManager.setRealtime(false);
                 return true;
             default:

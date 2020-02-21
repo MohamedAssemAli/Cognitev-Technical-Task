@@ -3,6 +3,7 @@ package com.assem.cognitev.nearby.Helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -19,12 +20,13 @@ public class PrefManager {
     // Keys
     private final String KEY_IS_REALTIME = "is_realtime";
     private final String KEY_LAST_SAVED_LOCATION = "last_saved_location";
+    private final String KEY_LAST_SAVED_LOCATION_LAT = "KEY_LAST_SAVED_LOCATION_LAT";
+    private final String KEY_LAST_SAVED_LOCATION_LON = "KEY_LAST_SAVED_LOCATION_LON";
 
     public PrefManager(Context context) {
         this.context = context;
         pref = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
-        gson = new Gson();
     }
 
     public void setRealtime(boolean isRealtime) {
@@ -37,15 +39,22 @@ public class PrefManager {
     }
 
     public void setLastSavedLocation(Location location) {
-        Gson gson = new Gson();
-        String json = gson.toJson(location);
-        editor.putString(KEY_LAST_SAVED_LOCATION, json);
+        editor.putString(KEY_LAST_SAVED_LOCATION_LAT, String.valueOf(location.getLatitude()));
+        editor.putString(KEY_LAST_SAVED_LOCATION_LON, String.valueOf(location.getLongitude()));
         editor.commit();
     }
 
     public Location getLastSavedLocation() {
-        String json = pref.getString(KEY_LAST_SAVED_LOCATION, "");
-        return gson.fromJson(json, Location.class);
+        Location location = new Location("");
+        try {
+            double lat = Double.parseDouble(pref.getString(KEY_LAST_SAVED_LOCATION_LAT, ""));
+            double lon = Double.parseDouble(pref.getString(KEY_LAST_SAVED_LOCATION_LON, ""));
+            location.setLatitude(lat);
+            location.setLongitude(lon);
+        } catch (Exception e) {
+            Log.d(TAG, "getLastSavedLocation: exception =>" + e.getMessage());
+        }
+        return location;
     }
 }
 

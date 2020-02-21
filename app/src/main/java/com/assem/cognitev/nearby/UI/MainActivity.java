@@ -85,6 +85,8 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
         init();
+
+        Log.d(TAG, "onCreate: Location => " + prefManager.getLastSavedLocation().toString());
     }
 
     @Override
@@ -118,7 +120,7 @@ public class MainActivity extends AppCompatActivity
         // get user pref
         if (prefManager.isRealtime()) {
             // do Realtime mode work
-            startLocationChangeListner();
+            startLocationChangeListener();
         } else {
             // do single update mode work
         }
@@ -178,7 +180,7 @@ public class MainActivity extends AppCompatActivity
         placesViewModel.getVenues(location);
     }
 
-    private void startLocationChangeListner() {
+    private void startLocationChangeListener() {
         locationRequest = new LocationRequest()
                 .setInterval(UPDATE_INTERVAL)
                 .setFastestInterval(FASTEST_INTERVAL)
@@ -195,11 +197,11 @@ public class MainActivity extends AppCompatActivity
                     // ...
                     Log.d(TAG, "onLocationResult: new location =>" + location.getLatitude() + " - " + location.getLongitude());
                     Location lastSaveLocation = prefManager.getLastSavedLocation();
-                    if (isDistanceChanged(lastSaveLocation, location)) {
-                        getNearByVenues(location);
-                        prefManager.setLastSavedLocation(location);
-//                        toggleLayout(false);
-                    }
+                    if (lastSaveLocation != null)
+                        if (isDistanceChanged(lastSaveLocation, location)) {
+                            prefManager.setLastSavedLocation(location);
+                        }
+                    getNearByVenues(location);
                 }
             }
         };
@@ -266,19 +268,21 @@ public class MainActivity extends AppCompatActivity
             case R.id.menu_item_realtime:
                 Toast.makeText(this, "Realtime mode started!", Toast.LENGTH_LONG).show();
                 prefManager.setRealtime(true);
-                startLocationChangeListner();
+                startLocationChangeListener();
                 return true;
             case R.id.menu_item_single_update:
                 Toast.makeText(this, "Single update mode started!", Toast.LENGTH_LONG).show();
                 prefManager.setRealtime(false);
                 if (locationCallback != null)
                     fusedLocationClient.removeLocationUpdates(locationCallback);
-                getNearByVenues(prefManager.getLastSavedLocation());
+                Location lastSaveLocation = prefManager.getLastSavedLocation();
+                getNearByVenues(lastSaveLocation);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
 
     // handle data retrieving & rendering / no data retrieved
     private void toggleLayout(boolean flag) {
@@ -288,6 +292,9 @@ public class MainActivity extends AppCompatActivity
             if (onRequestError) {
                 somethingWrongLayout.setVisibility(View.VISIBLE);
                 placesRecyclerView.setVisibility(View.GONE);
+            } else {
+                somethingWrongLayout.setVisibility(View.GONE);
+                placesRecyclerView.setVisibility(View.VISIBLE);
             }
             if (isEmpty) {
                 noDataFoundLayout.setVisibility(View.VISIBLE);

@@ -26,7 +26,7 @@ public class PlacesClient {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(AppConfig.BASE_URL)
-                .client(okHttpClient)
+//                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         placeInterface = retrofit.create(PlaceInterface.class);

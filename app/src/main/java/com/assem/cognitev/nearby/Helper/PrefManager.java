@@ -2,29 +2,29 @@ package com.assem.cognitev.nearby.Helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 
-import com.assem.cognitev.nearby.Models.Temp.Location;
+import com.google.gson.Gson;
 
 public class PrefManager {
-
-    // LogCat tag
     private static String TAG = PrefManager.class.getSimpleName();
     // Shared Preferences
-    SharedPreferences pref;
-    SharedPreferences.Editor editor;
-    Context context;
-    // Shared pref mode
-    int PRIVATE_MODE = 0;
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
+    private Context context;
+    private Gson gson;  // Shared pref mode
+    private int PRIVATE_MODE = 0;
     // Shared preferences file name
     private static final String PREF_NAME = "NearByApp";
     // Keys
-    private static final String KEY_IS_REALTIME = "isRealtime";
-    private static final String KEY_LAST_SAVED_LOCATION = "last_saved_location";
+    private final String KEY_IS_REALTIME = "is_realtime";
+    private final String KEY_LAST_SAVED_LOCATION = "last_saved_location";
 
     public PrefManager(Context context) {
         this.context = context;
         pref = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
+        gson = new Gson();
     }
 
     public void setRealtime(boolean isRealtime) {
@@ -37,8 +37,15 @@ public class PrefManager {
     }
 
     public void setLastSavedLocation(Location location) {
-        editor.putString(KEY_IS_REALTIME, location.toString());
+        Gson gson = new Gson();
+        String json = gson.toJson(location);
+        editor.putString(KEY_LAST_SAVED_LOCATION, json);
         editor.commit();
+    }
+
+    public Location getLastSavedLocation() {
+        String json = pref.getString(KEY_LAST_SAVED_LOCATION, "");
+        return gson.fromJson(json, Location.class);
     }
 }
 

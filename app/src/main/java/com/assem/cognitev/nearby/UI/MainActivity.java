@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     private long FASTEST_INTERVAL = 1000; /* 2 sec */
     // vars
     private boolean isEmpty = false;
+    private boolean onRequestError = false;
     // Views
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -120,7 +121,6 @@ public class MainActivity extends AppCompatActivity
             startLocationChangeListner();
         } else {
             // do single update mode work
-            //        fusedLocationClient.removeLocationUpdates(locationCallback);
         }
 
 
@@ -133,6 +133,12 @@ public class MainActivity extends AppCompatActivity
         placesViewModel.isEmptyMutableLiveData.observe(this, aBoolean -> {
             Log.d(TAG, "init: isEmpty => " + aBoolean);
             isEmpty = aBoolean;
+            toggleLayout(true);
+        });
+
+        placesViewModel.onErrorMutableLiveData.observe(this, aBoolean -> {
+            Log.d(TAG, "init: isEmpty => " + aBoolean);
+            onRequestError = aBoolean;
             toggleLayout(true);
         });
     }
@@ -196,12 +202,11 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
             }
-
-            ;
         };
         fusedLocationClient.requestLocationUpdates(locationRequest,
                 locationCallback,
                 Looper.getMainLooper());
+
     }
 
     private boolean isDistanceChanged(Location oldLocation, Location newLocation) {
@@ -261,10 +266,14 @@ public class MainActivity extends AppCompatActivity
             case R.id.menu_item_realtime:
                 Toast.makeText(this, "Realtime mode started!", Toast.LENGTH_LONG).show();
                 prefManager.setRealtime(true);
+                startLocationChangeListner();
                 return true;
             case R.id.menu_item_single_update:
                 Toast.makeText(this, "Single update mode started!", Toast.LENGTH_LONG).show();
                 prefManager.setRealtime(false);
+                if (locationCallback != null)
+                    fusedLocationClient.removeLocationUpdates(locationCallback);
+                getNearByVenues(prefManager.getLastSavedLocation());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -276,6 +285,10 @@ public class MainActivity extends AppCompatActivity
         if (flag) {
             progressLayout.setVisibility(View.GONE);
             progressBar.hide();
+            if (onRequestError) {
+                somethingWrongLayout.setVisibility(View.VISIBLE);
+                placesRecyclerView.setVisibility(View.GONE);
+            }
             if (isEmpty) {
                 noDataFoundLayout.setVisibility(View.VISIBLE);
                 placesRecyclerView.setVisibility(View.GONE);
@@ -283,6 +296,7 @@ public class MainActivity extends AppCompatActivity
                 noDataFoundLayout.setVisibility(View.GONE);
                 placesRecyclerView.setVisibility(View.VISIBLE);
             }
+
         } else {
             progressLayout.setVisibility(View.VISIBLE);
             progressBar.show();

@@ -43,9 +43,9 @@ public class PlacesViewModel extends ViewModel {
                             }.getType());
                             itemsMutableLiveData.setValue(items);
                             if (jsonArray.size() == 0)
-                                isEmptyMutableLiveData.setValue(false);
-                            else
                                 isEmptyMutableLiveData.setValue(true);
+                            else
+                                isEmptyMutableLiveData.setValue(false);
                         } catch (Exception e) {
                             Log.d(TAG, "onResponse: exception =>", e);
                             isEmptyMutableLiveData.setValue(true);

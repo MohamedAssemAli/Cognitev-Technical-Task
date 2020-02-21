@@ -51,6 +51,12 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolde
         notifyDataSetChanged();
     }
 
+    public void clearList(ArrayList<Item> itemsArrayList) {
+        this.itemsArrayList = itemsArrayList;
+        itemsArrayList.clear();
+        notifyDataSetChanged();
+    }
+
     class PlaceHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.item_place_title)

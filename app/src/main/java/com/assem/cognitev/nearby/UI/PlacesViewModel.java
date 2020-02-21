@@ -26,6 +26,7 @@ public class PlacesViewModel extends ViewModel {
 
     MutableLiveData<ArrayList<Item>> itemsMutableLiveData = new MutableLiveData<>();
     MutableLiveData<Boolean> isEmptyMutableLiveData = new MutableLiveData<>();
+    MutableLiveData<Boolean> onErrorMutableLiveData = new MutableLiveData<>();
 
     public void getVenues(Location location) {
         PlacesClient
@@ -48,13 +49,13 @@ public class PlacesViewModel extends ViewModel {
                                 isEmptyMutableLiveData.setValue(false);
                         } catch (Exception e) {
                             Log.d(TAG, "onResponse: exception =>" + e.getMessage());
-                            isEmptyMutableLiveData.setValue(true);
+                            onErrorMutableLiveData.setValue(true);
                         }
                     }
 
                     @Override
                     public void onFailure(Call<JsonObject> call, Throwable t) {
-                        isEmptyMutableLiveData.setValue(true);
+                        onErrorMutableLiveData.setValue(true);
                     }
                 });
     }

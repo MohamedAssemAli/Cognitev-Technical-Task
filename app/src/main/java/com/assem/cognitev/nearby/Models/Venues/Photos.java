@@ -1,5 +1,5 @@
 
-package com.assem.cognitev.nearby.Models;
+package com.assem.cognitev.nearby.Models.Venues;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;

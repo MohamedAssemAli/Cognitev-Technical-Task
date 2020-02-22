@@ -1,6 +1,7 @@
 
-package com.assem.cognitev.nearby.Models;
+package com.assem.cognitev.nearby.Models.Venues;
 
+import com.assem.cognitev.nearby.Models.Photos.VenuePhoto;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -16,15 +17,16 @@ public class Item {
     @Expose
     private String referralId;
 
+    private VenuePhoto venuePhoto;
+
+
     /**
      * No args constructor for use in serialization
-     * 
      */
     public Item() {
     }
 
     /**
-     * 
      * @param venue
      * @param reasons
      * @param referralId
@@ -75,4 +77,11 @@ public class Item {
         return this;
     }
 
+    public VenuePhoto getVenuePhoto() {
+        return venuePhoto;
+    }
+
+    public void setVenuePhoto(VenuePhoto venuePhoto) {
+        this.venuePhoto = venuePhoto;
+    }
 }

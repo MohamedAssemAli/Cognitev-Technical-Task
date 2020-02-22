@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.assem.cognitev.nearby.Models.Item;
+import com.assem.cognitev.nearby.Models.Venues.Item;
 import com.assem.cognitev.nearby.R;
 
 import java.util.ArrayList;

@@ -1,6 +1,7 @@
 
-package com.assem.cognitev.nearby.Models;
+package com.assem.cognitev.nearby.Models.Venues;
 
+import com.assem.cognitev.nearby.Models.Photos.VenuePhoto;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -24,10 +25,6 @@ public class Venue {
     @Expose
     private Photos photos;
 
-    private String photoPrefix;
-    private String photoSuffix;
-    private String photoWidth;
-    private String photoHeight;
 
     /**
      * No args constructor for use in serialization
@@ -114,37 +111,5 @@ public class Venue {
     public Venue withPhotos(Photos photos) {
         this.photos = photos;
         return this;
-    }
-
-    public String getPhotoPrefix() {
-        return photoPrefix;
-    }
-
-    public void setPhotoPrefix(String photoPrefix) {
-        this.photoPrefix = photoPrefix;
-    }
-
-    public String getPhotoSuffix() {
-        return photoSuffix;
-    }
-
-    public void setPhotoSuffix(String photoSuffix) {
-        this.photoSuffix = photoSuffix;
-    }
-
-    public String getPhotoWidth() {
-        return photoWidth;
-    }
-
-    public void setPhotoWidth(String photoWidth) {
-        this.photoWidth = photoWidth;
-    }
-
-    public String getPhotoHeight() {
-        return photoHeight;
-    }
-
-    public void setPhotoHeight(String photoHeight) {
-        this.photoHeight = photoHeight;
     }
 }

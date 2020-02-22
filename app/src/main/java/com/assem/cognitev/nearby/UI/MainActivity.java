@@ -178,7 +178,10 @@ public class MainActivity extends AppCompatActivity
     // call ViewModel actions
     private void getNearByVenues(Location location) {
         venuesViewModel.getVenues(location);
+        venuesViewModel.getVenues_(location);
         venuesViewModel.getVenuePhotos("55084193498eded0dc36c1e0");
+        venuesViewModel.fetchPlaces(location);
+
     }
 
     private void startLocationChangeListener() {

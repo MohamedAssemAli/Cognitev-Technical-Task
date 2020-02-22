@@ -1,9 +1,16 @@
 package com.assem.cognitev.nearby.Data;
 
 import com.assem.cognitev.nearby.App.AppConfig;
+import com.assem.cognitev.nearby.Models.Photos.VenuePhoto;
+import com.assem.cognitev.nearby.Models.Responses.photos.PhotoRespone;
+import com.assem.cognitev.nearby.Models.Responses.places.PlacesResponse;
+import com.assem.cognitev.nearby.Models.Venues.Item;
 import com.google.gson.JsonObject;
 
+import java.util.ArrayList;
+
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import retrofit2.Response;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -37,4 +44,38 @@ https://api.foursquare.com/v2/venues/search?ll=40.7,-74&client_id=QI3JN03II2AEFX
              @Query(AppConfig.CLIENT_ID) String clientId,
              @Query(AppConfig.CLIENT_SECRET) String clientSecret,
              @Query(AppConfig.VERSION) String version);
+
+
+    @GET("venues/explore")
+    public Single<ArrayList<Item>> getVenues_
+            (@Query(AppConfig.CLIENT_ID) String clientId,
+             @Query(AppConfig.CLIENT_SECRET) String clientSecret,
+             @Query(AppConfig.LL) String location,
+             @Query(AppConfig.RADIUS) String radius,
+             @Query(AppConfig.VERSION) String version);
+
+    @GET("venues/{venue_id}/photos")
+    public Single<VenuePhoto> getVenuePhotos_
+            (@Path(AppConfig.VENUE_ID) String venueId,
+             @Query(AppConfig.CLIENT_ID) String clientId,
+             @Query(AppConfig.CLIENT_SECRET) String clientSecret,
+             @Query(AppConfig.VERSION) String version);
+
+
+    @GET("venues/explore")
+    public Single<PlacesResponse> getVenuesRes
+            (@Query(AppConfig.CLIENT_ID) String clientId,
+             @Query(AppConfig.CLIENT_SECRET) String clientSecret,
+             @Query(AppConfig.LL) String location,
+             @Query(AppConfig.RADIUS) String radius,
+             @Query(AppConfig.VERSION) String version);
+
+    @GET("venues/{venue_id}/photos")
+    public Single<PhotoRespone> getVenuePhotosRes
+            (@Path(AppConfig.VENUE_ID) String venueId,
+             @Query(AppConfig.CLIENT_ID) String clientId,
+             @Query(AppConfig.CLIENT_SECRET) String clientSecret,
+             @Query(AppConfig.VERSION) String version);
+
+
 }

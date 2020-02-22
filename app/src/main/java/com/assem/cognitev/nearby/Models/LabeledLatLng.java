@@ -1,5 +1,5 @@
 
-package com.assem.cognitev.nearby.Models.Temp;
+package com.assem.cognitev.nearby.Models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

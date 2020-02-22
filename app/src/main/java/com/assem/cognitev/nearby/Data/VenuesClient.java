@@ -7,17 +7,19 @@ import com.google.gson.JsonObject;
 
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
 import okhttp3.OkHttpClient;
-import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class PlacesClient {
+public class VenuesClient {
 
-    private PlaceInterface placeInterface;
-    private static PlacesClient INSTANCE;
+    private VenuesInterface venuesInterface;
+    private static VenuesClient INSTANCE;
 
-    public PlacesClient() {
+    public VenuesClient() {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(1, TimeUnit.MINUTES)
                 .readTimeout(1, TimeUnit.MINUTES)
@@ -27,25 +29,35 @@ public class PlacesClient {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(AppConfig.BASE_URL)
 //                .client(okHttpClient)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        placeInterface = retrofit.create(PlaceInterface.class);
+        venuesInterface = retrofit.create(VenuesInterface.class);
     }
 
-    public static PlacesClient getClient() {
+    public static VenuesClient getClient() {
         if (INSTANCE == null) {
-            INSTANCE = new PlacesClient();
+            INSTANCE = new VenuesClient();
         }
         return INSTANCE;
     }
 
-    public Call<JsonObject> getVenues(Location location) {
-        return placeInterface
+    public Observable<Response<JsonObject>> getVenues(Location location) {
+        return venuesInterface
                 .getVenues(
                         AppConfig.ID,
                         AppConfig.SECRET,
                         location.getLatitude() + "," + location.getLongitude(),
-                        "500",
+                        AppConfig.RADIUS_VALUE,
+                        "20200215");
+    }
+
+    public Observable<Response<JsonObject>> getVenuePhotos(String venueId) {
+        return venuesInterface
+                .getVenuePhotos(
+                        venueId,
+                        AppConfig.ID,
+                        AppConfig.SECRET,
                         "20200215");
     }
 }

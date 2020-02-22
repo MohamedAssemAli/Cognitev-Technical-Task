@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.assem.cognitev.nearby.Models.Temp.Item;
+import com.assem.cognitev.nearby.Models.Item;
 import com.assem.cognitev.nearby.R;
 
 import java.util.ArrayList;
@@ -17,12 +17,12 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceHolder> {
+public class VenuesAdapter extends RecyclerView.Adapter<VenuesAdapter.PlaceHolder> {
 
     private Context context;
     private ArrayList<Item> itemsArrayList = new ArrayList<>();
 
-    public PlacesAdapter(Context context) {
+    public VenuesAdapter(Context context) {
         this.context = context;
     }
 

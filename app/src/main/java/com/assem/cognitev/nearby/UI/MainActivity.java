@@ -48,8 +48,8 @@ public class MainActivity extends AppCompatActivity
     private final String TAG = MainActivity.class.getSimpleName();
     // instances
     private BuildViews buildViews;
-    private PlacesAdapter placesAdapter;
-    private PlacesViewModel placesViewModel;
+    private VenuesAdapter venuesAdapter;
+    private VenuesViewModel venuesViewModel;
     // pref instances
     private PrefManager prefManager;
     // location module
@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity
     private FusedLocationProviderClient fusedLocationClient;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
-    private long UPDATE_INTERVAL = 10 * 1000;  /* 60 secs */
-    private long FASTEST_INTERVAL = 1000; /* 2 sec */
+    private long UPDATE_INTERVAL = 10 * 6000;  /* 60 secs */
+    private long FASTEST_INTERVAL = 10 * 3000; /* 6 sec */
     // vars
     private boolean isEmpty = false;
     private boolean onRequestError = false;
@@ -107,12 +107,12 @@ public class MainActivity extends AppCompatActivity
         // Initialize instances
         prefManager = new PrefManager(this);
         buildViews = new BuildViews();
-        placesAdapter = new PlacesAdapter(this);
+        venuesAdapter = new VenuesAdapter(this);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        placesViewModel = ViewModelProviders.of(this).get(PlacesViewModel.class);
+        venuesViewModel = ViewModelProviders.of(this).get(VenuesViewModel.class);
         // setup recyclerView
         buildViews.setupLinearVerticalRecView(placesRecyclerView, this);
-        placesRecyclerView.setAdapter(placesAdapter);
+        placesRecyclerView.setAdapter(venuesAdapter);
 
         // get user location
         getLocation();
@@ -127,18 +127,18 @@ public class MainActivity extends AppCompatActivity
 
 
         // setup viewModel
-        placesViewModel.itemsMutableLiveData.observe(this, items -> {
+        venuesViewModel.itemsMutableLiveData.observe(this, items -> {
             Log.d(TAG, "init: venue =>" + items.get(0).getVenue());
-            placesAdapter.setList(items);
+            venuesAdapter.setList(items);
             toggleLayout(true);
         });
-        placesViewModel.isEmptyMutableLiveData.observe(this, aBoolean -> {
+        venuesViewModel.isEmptyMutableLiveData.observe(this, aBoolean -> {
             Log.d(TAG, "init: isEmpty => " + aBoolean);
             isEmpty = aBoolean;
             toggleLayout(true);
         });
 
-        placesViewModel.onErrorMutableLiveData.observe(this, aBoolean -> {
+        venuesViewModel.onErrorMutableLiveData.observe(this, aBoolean -> {
             Log.d(TAG, "init: isEmpty => " + aBoolean);
             onRequestError = aBoolean;
             toggleLayout(true);
@@ -177,7 +177,8 @@ public class MainActivity extends AppCompatActivity
 
     // call ViewModel actions
     private void getNearByVenues(Location location) {
-        placesViewModel.getVenues(location);
+        venuesViewModel.getVenues(location);
+        venuesViewModel.getVenuePhotos("55084193498eded0dc36c1e0");
     }
 
     private void startLocationChangeListener() {

@@ -8,8 +8,8 @@ public class AppConfig {
     /*
      https://api.foursquare.com/v2/venues/explore?
      ll=29.978391,30.954928
-     &client_id=QI3JN03II2AEFXVUZWUWTDLUWBTRSHXJLPJDPWZ0V0QY2DA5
-     &client_secret=JI23SHUX4JYSPJNLKDMYTZFEVSLBTX2KKVYVSTJKFBFIQKGZ
+     &client_id=WIYK400JVZ2MZ2UASKFQFKBRXYNBQZMVIKFHW1ZME43FGSG0
+     &client_secret=PKGEAAH4M25CDNU1HSTVCE5U3T5GQIQISZEVG0CVQ5HY22CB
      &v=20200215
      &radius=500
      */
@@ -17,8 +17,8 @@ public class AppConfig {
     // Photos end point
     /*
     https://api.foursquare.com/v2/venues/{venue_id}/photos?
-    client_id=QI3JN03II2AEFXVUZWUWTDLUWBTRSHXJLPJDPWZ0V0QY2DA5
-    &client_secret=JI23SHUX4JYSPJNLKDMYTZFEVSLBTX2KKVYVSTJKFBFIQKGZ
+    client_id=WIYK400JVZ2MZ2UASKFQFKBRXYNBQZMVIKFHW1ZME43FGSG0
+    &client_secret=PKGEAAH4M25CDNU1HSTVCE5U3T5GQIQISZEVG0CVQ5HY22CB
     &v=20200215
 
      */
@@ -30,16 +30,20 @@ public class AppConfig {
     public static final String BASE_URL = "https://api.foursquare.com/v2/";
     public static final String LL = "ll";
     public static final String CLIENT_ID = "client_id";
-    public static final String ID = "KJ5KJ0Q4GBFAR5MFM2DP0BTH0CAGOBGFSAXI034VXN5N5B1S";
+    public static final String ID = "WIYK400JVZ2MZ2UASKFQFKBRXYNBQZMVIKFHW1ZME43FGSG0";
     public static final String CLIENT_SECRET = "client_secret";
-    public static final String SECRET = "2CSX2PIGUL0HJUQKV0KSDZKAU2P2KKUJD4SIXGMTJJVCF3L5";
-    public static final String V = "v";
+    public static final String SECRET = "PKGEAAH4M25CDNU1HSTVCE5U3T5GQIQISZEVG0CVQ5HY22CB";
+    public static final String VERSION = "v";
     public static final String RADIUS = "radius";
-
+    public static final String RADIUS_VALUE = "500";
     public static final String RESPONSE = "response";
     public static final String GROUPS = "groups";
     public static final String ITEMS = "items";
     public static final String VENUE = "venue";
+    public static final String VENUE_ID = "venue_id";
+    public static final String PHOTOS = "photos";
+
+
 
 }
 

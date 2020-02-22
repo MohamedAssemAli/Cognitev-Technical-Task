@@ -1,18 +1,21 @@
-package com.assem.cognitev.nearby.Models.Responses.photos;
+package com.assem.cognitev.nearby.Models.places;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Photos {
-
+public class Group {
 
     @SerializedName("items")
     @Expose
-    public List<Item> items;
+    private List<Item> places;
 
     public List<Item> getItems() {
-        return items;
+        return places;
+    }
+
+    public void setItems(List<Item> items) {
+        this.places = items;
     }
 }

@@ -43,8 +43,6 @@ public class AppConfig {
     public static final String VENUE_ID = "venue_id";
     public static final String PHOTOS = "photos";
 
-
-
 }
 
 

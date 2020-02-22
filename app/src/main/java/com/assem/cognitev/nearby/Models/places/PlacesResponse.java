@@ -1,4 +1,4 @@
-package com.assem.cognitev.nearby.Models.Responses.places;
+package com.assem.cognitev.nearby.Models.places;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

@@ -1,26 +1,30 @@
 package com.assem.cognitev.nearby.UI;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.assem.cognitev.nearby.Models.Venues.Item;
+import com.assem.cognitev.nearby.Models.places.Item;
 import com.assem.cognitev.nearby.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class VenuesAdapter extends RecyclerView.Adapter<VenuesAdapter.PlaceHolder> {
 
+    private final String TAG = VenuesAdapter.class.getSimpleName();
     private Context context;
-    private ArrayList<Item> itemsArrayList = new ArrayList<>();
+    private List<Item> itemsArrayList = new ArrayList<>();
 
     public VenuesAdapter(Context context) {
         this.context = context;
@@ -36,9 +40,11 @@ public class VenuesAdapter extends RecyclerView.Adapter<VenuesAdapter.PlaceHolde
     @Override
     public void onBindViewHolder(@NonNull PlaceHolder holder, int position) {
         final Item itemModel = itemsArrayList.get(position);
-        holder.placeTitle.setText(itemModel.getVenue().getName());
-        holder.placeAddress.setText(itemModel.getVenue().getCategories().get(0).getName()
-                + " - " + itemModel.getVenue().getLocation().getFormattedAddress().toString());
+        holder.placeTitle.setText(itemModel.getPlace().getName());
+        holder.placeAddress.setText(itemModel.getPlace().getCategories().get(0).getName()
+                + " - " + itemModel.getPlace().getLocation().getFormatted_address().toString());
+        Log.d(TAG, "onBindViewHolder: img " + itemModel.getPlace().getPhotoRespone().getPhotoUrl());
+//        ImageViewUtils.fitImage(context, holder.placeImg, itemModel.getPlace().getPhotoRespone().getPhotoUrl());
     }
 
     @Override
@@ -46,8 +52,9 @@ public class VenuesAdapter extends RecyclerView.Adapter<VenuesAdapter.PlaceHolde
         return itemsArrayList.size();
     }
 
-    public void setList(ArrayList<Item> itemsArrayList) {
+    public void setList(List<Item> itemsArrayList) {
         this.itemsArrayList = itemsArrayList;
+        Log.d(TAG, "setList: " + itemsArrayList);
         notifyDataSetChanged();
     }
 
@@ -59,6 +66,8 @@ public class VenuesAdapter extends RecyclerView.Adapter<VenuesAdapter.PlaceHolde
 
     class PlaceHolder extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.item_place_image)
+        ImageView placeImg;
         @BindView(R.id.item_place_title)
         TextView placeTitle;
         @BindView(R.id.item_place_address)

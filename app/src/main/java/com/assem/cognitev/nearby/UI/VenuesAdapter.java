@@ -15,6 +15,7 @@ import com.assem.cognitev.nearby.R;
 import com.assem.cognitev.nearby.Utils.ImageViewUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,7 +23,7 @@ import butterknife.ButterKnife;
 public class VenuesAdapter extends RecyclerView.Adapter<VenuesAdapter.PlaceHolder> {
 
     private Context context;
-    private ArrayList<Item> itemsArrayList = new ArrayList<>();
+    private List<Item> itemsArrayList = new ArrayList<>();
 
     public VenuesAdapter(Context context) {
         this.context = context;
@@ -44,12 +45,17 @@ public class VenuesAdapter extends RecyclerView.Adapter<VenuesAdapter.PlaceHolde
         ImageViewUtils.fitImage(context, holder.placeImg, itemModel.getPlace().getPhotoRespone().getPhotoUrl());
     }
 
+    public void updatePlace(Item place) {
+        itemsArrayList.add(place);
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return itemsArrayList.size();
     }
 
-    public void setList(ArrayList<Item> itemsArrayList) {
+    public void setList(List<Item> itemsArrayList) {
         this.itemsArrayList = itemsArrayList;
         notifyDataSetChanged();
     }

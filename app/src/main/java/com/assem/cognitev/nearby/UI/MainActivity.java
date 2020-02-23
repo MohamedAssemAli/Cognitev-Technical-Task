@@ -20,11 +20,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.ContentLoadingProgressBar;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.assem.cognitev.nearby.App.MyApplication;
 import com.assem.cognitev.nearby.Helper.PrefManager;
+import com.assem.cognitev.nearby.Models.Responses.places.Item;
 import com.assem.cognitev.nearby.R;
 import com.assem.cognitev.nearby.Utils.BuildViews;
 import com.assem.cognitev.nearby.Utils.ConnectivityReceiver;
@@ -127,10 +129,21 @@ public class MainActivity extends AppCompatActivity
 
 
         // setup viewModel
-        venuesViewModel.itemsMutableLiveData.observe(this, items -> {
-            venuesAdapter.setList(items);
-            toggleLayout(true);
+        venuesViewModel.updatedPlace.observe(this, new Observer<Item>() {
+            @Override
+            public void onChanged(Item item) {
+                if (item != null) {
+                    venuesAdapter.updatePlace(item);
+                    toggleLayout(true);
+                }
+            }
         });
+//        venuesViewModel.places.observe(this, items -> {
+//            if (items != null) {
+//                venuesAdapter.setList(items);
+//                toggleLayout(true);
+//            }
+//        });
         venuesViewModel.isEmptyMutableLiveData.observe(this, aBoolean -> {
             Log.d(TAG, "init: isEmpty => " + aBoolean);
             isEmpty = aBoolean;

@@ -142,13 +142,13 @@ public class VenuesViewModel extends ViewModel {
 
 
     // test
-    private final MutableLiveData<List<com.assem.cognitev.nearby.Models.Responses.places.Item>> places = new MutableLiveData<>();
+    public final MutableLiveData<List<com.assem.cognitev.nearby.Models.Responses.places.Item>> places = new MutableLiveData<>();
     private final MutableLiveData<Throwable> loadError = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isFirstRequest = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isPermissionGranted = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLocationEnabled = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isRealTime = new MutableLiveData<>();
-    private final MutableLiveData<com.assem.cognitev.nearby.Models.Responses.places.Item> updatedPlace = new MutableLiveData<>();
+    public final MutableLiveData<com.assem.cognitev.nearby.Models.Responses.places.Item> updatedPlace = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isConnected = new MutableLiveData<>();
 
 

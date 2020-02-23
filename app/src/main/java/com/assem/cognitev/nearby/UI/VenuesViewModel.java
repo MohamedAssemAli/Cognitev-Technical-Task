@@ -1,33 +1,24 @@
 package com.assem.cognitev.nearby.UI;
 
-import android.annotation.SuppressLint;
 import android.location.Location;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.assem.cognitev.nearby.App.AppConfig;
 import com.assem.cognitev.nearby.Data.VenuesClient;
 import com.assem.cognitev.nearby.Models.Photos.VenuePhoto;
 import com.assem.cognitev.nearby.Models.Responses.places.Item;
 import com.assem.cognitev.nearby.Models.Responses.places.PlacesResponse;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Function;
-import io.reactivex.internal.operators.observable.ObservableAll;
 import io.reactivex.observables.ConnectableObservable;
-import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 

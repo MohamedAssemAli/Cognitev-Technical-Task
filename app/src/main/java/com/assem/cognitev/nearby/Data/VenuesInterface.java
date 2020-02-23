@@ -1,8 +1,10 @@
 package com.assem.cognitev.nearby.Data;
 
 import com.assem.cognitev.nearby.App.AppConfig;
-import com.assem.cognitev.nearby.Models.photos.PhotoRespone;
-import com.assem.cognitev.nearby.Models.places.PlacesResponse;
+import com.assem.cognitev.nearby.Models.Photos.VenuePhoto;
+import com.assem.cognitev.nearby.Models.Responses.photos.PhotoRespone;
+import com.assem.cognitev.nearby.Models.Responses.places.PlacesResponse;
+import com.assem.cognitev.nearby.Models.Venues.Item;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
@@ -20,6 +22,13 @@ public interface VenuesInterface {
 https://api.foursquare.com/v2/venues/search?ll=40.7,-74&client_id=QI3JN03II2AEFXVUZWUWTDLUWBTRSHXJLPJDPWZ0V0QY2DA5&client_secret=JI23SHUX4JYSPJNLKDMYTZFEVSLBTX2KKVYVSTJKFBFIQKGZ&v=20200215
  */
 
+    @GET("venues/explore")
+    public Observable<Response<JsonObject>> getVenues
+            (@Query(AppConfig.CLIENT_ID) String clientId,
+             @Query(AppConfig.CLIENT_SECRET) String clientSecret,
+             @Query(AppConfig.LL) String location,
+             @Query(AppConfig.RADIUS) String radius,
+             @Query(AppConfig.VERSION) String version);
 
     /*
     https://api.foursquare.com/v2/venues/{venue_id}/photos?
@@ -29,6 +38,28 @@ https://api.foursquare.com/v2/venues/search?ll=40.7,-74&client_id=QI3JN03II2AEFX
 
      */
 
+    @GET("venues/{venue_id}/photos")
+    public Observable<Response<JsonObject>> getVenuePhotos
+            (@Path(AppConfig.VENUE_ID) String venueId,
+             @Query(AppConfig.CLIENT_ID) String clientId,
+             @Query(AppConfig.CLIENT_SECRET) String clientSecret,
+             @Query(AppConfig.VERSION) String version);
+
+
+    @GET("venues/explore")
+    public Single<ArrayList<Item>> getVenues_
+            (@Query(AppConfig.CLIENT_ID) String clientId,
+             @Query(AppConfig.CLIENT_SECRET) String clientSecret,
+             @Query(AppConfig.LL) String location,
+             @Query(AppConfig.RADIUS) String radius,
+             @Query(AppConfig.VERSION) String version);
+
+    @GET("venues/{venue_id}/photos")
+    public Single<VenuePhoto> getVenuePhotos_
+            (@Path(AppConfig.VENUE_ID) String venueId,
+             @Query(AppConfig.CLIENT_ID) String clientId,
+             @Query(AppConfig.CLIENT_SECRET) String clientSecret,
+             @Query(AppConfig.VERSION) String version);
 
 
     @GET("venues/explore")

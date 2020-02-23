@@ -1,7 +1,9 @@
-package com.assem.cognitev.nearby.Models.places;
+package com.assem.cognitev.nearby.Models.Responses.places;
+
+import android.widget.ImageView;
 
 
-import com.assem.cognitev.nearby.Models.photos.PhotoRespone;
+import com.assem.cognitev.nearby.Models.Responses.photos.PhotoRespone;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

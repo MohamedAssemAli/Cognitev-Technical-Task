@@ -20,13 +20,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.ContentLoadingProgressBar;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.assem.cognitev.nearby.App.MyApplication;
 import com.assem.cognitev.nearby.Helper.PrefManager;
-import com.assem.cognitev.nearby.Models.places.Item;
 import com.assem.cognitev.nearby.R;
 import com.assem.cognitev.nearby.Utils.BuildViews;
 import com.assem.cognitev.nearby.Utils.ConnectivityReceiver;
@@ -129,13 +127,9 @@ public class MainActivity extends AppCompatActivity
 
 
         // setup viewModel
-        venuesViewModel.places.observe(this, new Observer<List<Item>>() {
-            @Override
-            public void onChanged(List<Item> items) {
-                Log.d(TAG, "init: venue =>" + items.get(0).getPlace().getName());
-                venuesAdapter.setList(items);
-                toggleLayout(true);
-            }
+        venuesViewModel.itemsMutableLiveData.observe(this, items -> {
+            venuesAdapter.setList(items);
+            toggleLayout(true);
         });
         venuesViewModel.isEmptyMutableLiveData.observe(this, aBoolean -> {
             Log.d(TAG, "init: isEmpty => " + aBoolean);
@@ -182,8 +176,10 @@ public class MainActivity extends AppCompatActivity
 
     // call ViewModel actions
     private void getNearByVenues(Location location) {
+//        venuesViewModel.getVenues(location);
+//        venuesViewModel.getVenues_(location);
+//        venuesViewModel.getVenuePhotos("55084193498eded0dc36c1e0");
         venuesViewModel.fetchPlaces(location);
-
     }
 
     private void startLocationChangeListener() {

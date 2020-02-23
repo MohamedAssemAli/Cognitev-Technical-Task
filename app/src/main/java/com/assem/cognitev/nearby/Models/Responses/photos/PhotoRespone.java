@@ -1,4 +1,4 @@
-package com.assem.cognitev.nearby.Models.photos;
+package com.assem.cognitev.nearby.Models.Responses.photos;
 
 
 import com.google.gson.annotations.Expose;

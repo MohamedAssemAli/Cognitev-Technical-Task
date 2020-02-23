@@ -30,9 +30,9 @@ public class AppConfig {
     public static final String BASE_URL = "https://api.foursquare.com/v2/";
     public static final String LL = "ll";
     public static final String CLIENT_ID = "client_id";
-    public static final String ID = "WIYK400JVZ2MZ2UASKFQFKBRXYNBQZMVIKFHW1ZME43FGSG0";
+    public static final String ID = "QI3JN03II2AEFXVUZWUWTDLUWBTRSHXJLPJDPWZ0V0QY2DA5";
     public static final String CLIENT_SECRET = "client_secret";
-    public static final String SECRET = "PKGEAAH4M25CDNU1HSTVCE5U3T5GQIQISZEVG0CVQ5HY22CB";
+    public static final String SECRET = "JI23SHUX4JYSPJNLKDMYTZFEVSLBTX2KKVYVSTJKFBFIQKGZ";
     public static final String VERSION = "v";
     public static final String RADIUS = "radius";
     public static final String RADIUS_VALUE = "500";

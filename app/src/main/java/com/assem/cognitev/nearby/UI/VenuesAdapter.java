@@ -4,15 +4,18 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.assem.cognitev.nearby.Models.Item;
+import com.assem.cognitev.nearby.Models.Responses.places.Item;
 import com.assem.cognitev.nearby.R;
+import com.assem.cognitev.nearby.Utils.ImageViewUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,7 +23,7 @@ import butterknife.ButterKnife;
 public class VenuesAdapter extends RecyclerView.Adapter<VenuesAdapter.PlaceHolder> {
 
     private Context context;
-    private ArrayList<Item> itemsArrayList = new ArrayList<>();
+    private List<Item> itemsArrayList = new ArrayList<>();
 
     public VenuesAdapter(Context context) {
         this.context = context;
@@ -36,9 +39,15 @@ public class VenuesAdapter extends RecyclerView.Adapter<VenuesAdapter.PlaceHolde
     @Override
     public void onBindViewHolder(@NonNull PlaceHolder holder, int position) {
         final Item itemModel = itemsArrayList.get(position);
-        holder.placeTitle.setText(itemModel.getVenue().getName());
-        holder.placeAddress.setText(itemModel.getVenue().getCategories().get(0).getName()
-                + " - " + itemModel.getVenue().getLocation().getFormattedAddress().toString());
+        holder.placeTitle.setText(itemModel.getPlace().getName());
+        holder.placeAddress.setText(itemModel.getPlace().getCategories().get(0).getName()
+                + " - " + itemModel.getPlace().getLocation().getFormatted_address().toString());
+        ImageViewUtils.fitImage(context, holder.placeImg, itemModel.getPlace().getPhotoRespone().getPhotoUrl());
+    }
+
+    public void updatePlace(Item place) {
+        itemsArrayList.add(place);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -46,7 +55,7 @@ public class VenuesAdapter extends RecyclerView.Adapter<VenuesAdapter.PlaceHolde
         return itemsArrayList.size();
     }
 
-    public void setList(ArrayList<Item> itemsArrayList) {
+    public void setList(List<Item> itemsArrayList) {
         this.itemsArrayList = itemsArrayList;
         notifyDataSetChanged();
     }
@@ -59,6 +68,8 @@ public class VenuesAdapter extends RecyclerView.Adapter<VenuesAdapter.PlaceHolde
 
     class PlaceHolder extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.item_place_image)
+        ImageView placeImg;
         @BindView(R.id.item_place_title)
         TextView placeTitle;
         @BindView(R.id.item_place_address)

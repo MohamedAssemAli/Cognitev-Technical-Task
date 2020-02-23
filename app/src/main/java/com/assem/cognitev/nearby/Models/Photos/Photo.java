@@ -1,10 +1,10 @@
 
-package com.assem.cognitev.nearby.Models;
+package com.assem.cognitev.nearby.Models.Photos;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Icon {
+public class Photo {
 
     @SerializedName("prefix")
     @Expose
@@ -17,7 +17,7 @@ public class Icon {
      * No args constructor for use in serialization
      * 
      */
-    public Icon() {
+    public Photo() {
     }
 
     /**
@@ -25,7 +25,7 @@ public class Icon {
      * @param prefix
      * @param suffix
      */
-    public Icon(String prefix, String suffix) {
+    public Photo(String prefix, String suffix) {
         super();
         this.prefix = prefix;
         this.suffix = suffix;
@@ -39,22 +39,12 @@ public class Icon {
         this.prefix = prefix;
     }
 
-    public Icon withPrefix(String prefix) {
-        this.prefix = prefix;
-        return this;
-    }
-
     public String getSuffix() {
         return suffix;
     }
 
     public void setSuffix(String suffix) {
         this.suffix = suffix;
-    }
-
-    public Icon withSuffix(String suffix) {
-        this.suffix = suffix;
-        return this;
     }
 
 }

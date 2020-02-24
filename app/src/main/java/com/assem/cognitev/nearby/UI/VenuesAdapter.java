@@ -48,7 +48,7 @@ public class VenuesAdapter extends RecyclerView.Adapter<VenuesAdapter.PlaceHolde
         try {
             ImageViewUtils.fitImage(context, holder.placeImg, itemModel.getPlace().getPhotoResponse().getPhotoUrl());
         } catch (Exception e) {
-            Log.d(TAG, "onBindViewHolder: null");
+            Log.d(TAG, "onBindViewHolder: null", e);
         }
     }
 

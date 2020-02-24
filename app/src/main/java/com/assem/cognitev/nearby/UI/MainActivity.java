@@ -49,8 +49,7 @@ import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity
-        implements EasyPermissions.PermissionCallbacks,
-        ConnectivityReceiver.ConnectivityReceiverListener {
+        implements ConnectivityReceiver.ConnectivityReceiverListener {
 
     private final String TAG = MainActivity.class.getSimpleName();
     // instances
@@ -144,11 +143,6 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(MainActivity.this, "Permissions not granted", Toast.LENGTH_LONG).show();
             }
         });
-//
-//        if (venuesViewModel.isPermissionGranted())
-//            venuesViewModel.initLocationService(locationUtil);
-//        else
-//            Toast.makeText(this, "Permissions not granted", Toast.LENGTH_LONG).show();
 
         venuesViewModel.isLocationEnabled.observe(this, new Observer<Boolean>() {
             @Override
@@ -158,9 +152,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-//        // get user location
-//        getLocation();
-//
 //        // get user pref
 //        if (prefManager.isRealtime()) {
 //            // do Realtime mode work
@@ -199,109 +190,41 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    // get current user location
-//    private void getLocation() {
-//        if (hasPermissions()) {
-//            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                return;
-//            }
-//            fusedLocationClient.getLastLocation()
-//                    .addOnSuccessListener(this, location -> {
-//                        // Got last known location. In some rare situations this can be null.
-//                        if (location != null) {
-//                            // Logic to handle location object
-//                            Log.d(TAG, "getLocation: location =>" + location.getLatitude() + " - " + location.getLongitude());
-//                            getNearByVenues(location);
-//                            prefManager.setLastSavedLocation(location);
-//                        } else {
-//                            isEmpty = true;
-//                        }
-//                    });
-//        } else {
-//            Toast.makeText(this, "Something wrong", Toast.LENGTH_SHORT).show();
-//            // Ask for one permission
-//            EasyPermissions.requestPermissions(
-//                    this,
-//                    getString(R.string.rationale_location),
-//                    RC_LOCATION_PERM,
-//                    Manifest.permission.ACCESS_FINE_LOCATION);
-//            isEmpty = true;
-//        }
-//    }
-
     // call ViewModel actions
     private void getNearByVenues(Location location) {
         venuesViewModel.fetchPlaces(location);
     }
 
-    private void startLocationChangeListener() {
-        locationRequest = new LocationRequest()
-                .setInterval(UPDATE_INTERVAL)
-                .setFastestInterval(FASTEST_INTERVAL)
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
-                    return;
-                }
-                for (Location location : locationResult.getLocations()) {
-                    // Update UI with location data
-                    // ...
-                    Log.d(TAG, "onLocationResult: new location =>" + location.getLatitude() + " - " + location.getLongitude());
-                    Location lastSaveLocation = prefManager.getLastSavedLocation();
-                    if (lastSaveLocation != null)
-                        if (isDistanceChanged(lastSaveLocation, location)) {
-                            prefManager.setLastSavedLocation(location);
-                        }
-                    getNearByVenues(location);
-                }
-            }
-        };
-        fusedLocationClient.requestLocationUpdates(locationRequest,
-                locationCallback,
-                Looper.getMainLooper());
-
-    }
-
-    private boolean isDistanceChanged(Location oldLocation, Location newLocation) {
-        return oldLocation.distanceTo(newLocation) >= 500;
-    }
-
-    // handle RunTimePermissions
-    private boolean hasPermissions() {
-        return EasyPermissions.hasPermissions(this, permissionsList);
-    }
-
-    // EasyPermissions callbacks
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @Override
-    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-        Log.d(TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
-        // (Optional) Check whether the user denied any permissions and checked "NEVER ASK AGAIN."
-        // This will display a dialog directing them to enable the permission in app settings.
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            new AppSettingsDialog.Builder(this).build().show();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-
-    }
+//    private void startLocationChangeListener() {
+//        locationRequest = new LocationRequest()
+//                .setInterval(UPDATE_INTERVAL)
+//                .setFastestInterval(FASTEST_INTERVAL)
+//                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+//
+//        locationCallback = new LocationCallback() {
+//            @Override
+//            public void onLocationResult(LocationResult locationResult) {
+//                if (locationResult == null) {
+//                    return;
+//                }
+//                for (Location location : locationResult.getLocations()) {
+//                    // Update UI with location data
+//                    // ...
+//                    Log.d(TAG, "onLocationResult: new location =>" + location.getLatitude() + " - " + location.getLongitude());
+//                    Location lastSaveLocation = prefManager.getLastSavedLocation();
+//                    if (lastSaveLocation != null)
+//                        if (isDistanceChanged(lastSaveLocation, location)) {
+//                            prefManager.setLastSavedLocation(location);
+//                        }
+//                    getNearByVenues(location);
+//                }
+//            }
+//        };
+//        fusedLocationClient.requestLocationUpdates(locationRequest,
+//                locationCallback,
+//                Looper.getMainLooper());
+//
+//    }
 
     // inflate mainMenu
     @Override
@@ -318,7 +241,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.menu_item_realtime:
                 Toast.makeText(this, "Realtime mode started!", Toast.LENGTH_LONG).show();
                 prefManager.setRealtime(true);
-                startLocationChangeListener();
+//                startLocationChangeListener();
                 return true;
             case R.id.menu_item_single_update:
                 Toast.makeText(this, "Single update mode started!", Toast.LENGTH_LONG).show();

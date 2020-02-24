@@ -1,13 +1,10 @@
 package com.assem.cognitev.nearby.UI;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,7 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.assem.cognitev.nearby.App.MyApplication;
 import com.assem.cognitev.nearby.Helper.PrefManager;
-import com.assem.cognitev.nearby.Models.places.Item;
 import com.assem.cognitev.nearby.R;
 import com.assem.cognitev.nearby.Utils.BuildViews;
 import com.assem.cognitev.nearby.Utils.ConnectivityReceiver;
@@ -36,17 +32,12 @@ import com.assem.cognitev.nearby.Utils.LocationUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.disposables.CompositeDisposable;
-import pub.devrel.easypermissions.AppSettingsDialog;
-import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity
         implements ConnectivityReceiver.ConnectivityReceiverListener {

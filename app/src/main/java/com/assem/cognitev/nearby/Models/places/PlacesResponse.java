@@ -1,7 +1,5 @@
 package com.assem.cognitev.nearby.Models.places;
 
-import android.util.Log;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

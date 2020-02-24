@@ -35,11 +35,9 @@ public class VenuesViewModel extends ViewModel
 
     private final String TAG = VenuesViewModel.class.getSimpleName();
     private LocationUtil locationUtil;
-    private PrefManager prefManager;
     MutableLiveData<Boolean> isEmptyMutableLiveData = new MutableLiveData<>();
     MutableLiveData<Boolean> onErrorMutableLiveData = new MutableLiveData<>();
     // test
-
     public final MutableLiveData<List<Item>> places = new MutableLiveData<>();
     private final MutableLiveData<Throwable> loadError = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isFirstRequest = new MutableLiveData<>();

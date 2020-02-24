@@ -20,8 +20,6 @@ public class PhotoResponse {
     }
 
     public String getPhotoUrl() {
-        Log.d(TAG, "onBindViewHolder: " + response.getPhotos().getItems().get(0).getPrefix());
-
         return response.getPhotos().getItems().get(0).getPrefix()
                 + size + response.getPhotos().getItems().get(0).getSuffix();
     }

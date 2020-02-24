@@ -30,9 +30,9 @@ public class AppConfig {
     public static final String BASE_URL = "https://api.foursquare.com/v2/";
     public static final String LL = "ll";
     public static final String CLIENT_ID = "client_id";
-    public static final String ID = "QI3JN03II2AEFXVUZWUWTDLUWBTRSHXJLPJDPWZ0V0QY2DA5";
+    public static final String ID = "KJ5KJ0Q4GBFAR5MFM2DP0BTH0CAGOBGFSAXI034VXN5N5B1S";
     public static final String CLIENT_SECRET = "client_secret";
-    public static final String SECRET = "JI23SHUX4JYSPJNLKDMYTZFEVSLBTX2KKVYVSTJKFBFIQKGZ";
+    public static final String SECRET = "2CSX2PIGUL0HJUQKV0KSDZKAU2P2KKUJD4SIXGMTJJVCF3L5";
     public static final String VERSION = "v";
     public static final String RADIUS = "radius";
     public static final String RADIUS_VALUE = "500";
@@ -42,9 +42,6 @@ public class AppConfig {
     public static final String VENUE = "venue";
     public static final String VENUE_ID = "venue_id";
     public static final String PHOTOS = "photos";
-
-
-
 }
 
 

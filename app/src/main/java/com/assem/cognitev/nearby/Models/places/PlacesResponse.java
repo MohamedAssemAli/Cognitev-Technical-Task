@@ -1,11 +1,11 @@
-package com.assem.cognitev.nearby.Models.Responses.places;
+package com.assem.cognitev.nearby.Models.places;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class PlacesResponse  {
+public class PlacesResponse {
 
     @SerializedName("response")
     @Expose

@@ -1,10 +1,13 @@
-package com.assem.cognitev.nearby.Models.Responses.photos;
+package com.assem.cognitev.nearby.Models.Photos;
 
+import android.util.Log;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class PhotoRespone  {
+public class PhotoResponse {
+
+    private final String TAG = PhotoResponse.class.getSimpleName();
 
     @SerializedName("response")
     @Expose

@@ -1,10 +1,8 @@
-package com.assem.cognitev.nearby.Models.Responses.places;
-
-import android.widget.ImageView;
+package com.assem.cognitev.nearby.Models.places;
 
 
-import com.assem.cognitev.nearby.Models.Responses.photos.PhotoRespone;
 
+import com.assem.cognitev.nearby.Models.Photos.PhotoResponse;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -50,16 +48,14 @@ public class Place {
     public String getFormattedAddress() {
         return location.getFormatted_address().get(0);
     }
+    private PhotoResponse photoResponse;
 
-    public void setPhotoRespone(PhotoRespone photoRespone) {
-        this.photoRespone = photoRespone;
-    }
-
-    private PhotoRespone photoRespone;
-
-    public PhotoRespone getPhotoRespone() {
-        return photoRespone;
+    public PhotoResponse getPhotoResponse() {
+        return photoResponse;
     }
 
 
+    public void setPhotoResponse(PhotoResponse photoResponse) {
+        this.photoResponse = photoResponse;
+    }
 }

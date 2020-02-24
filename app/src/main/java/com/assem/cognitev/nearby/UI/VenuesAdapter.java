@@ -42,7 +42,7 @@ public class VenuesAdapter extends RecyclerView.Adapter<VenuesAdapter.PlaceHolde
         holder.placeTitle.setText(itemModel.getPlace().getName());
         holder.placeAddress.setText(itemModel.getPlace().getCategories().get(0).getName()
                 + " - " + itemModel.getPlace().getLocation().getFormatted_address().toString());
-        ImageViewUtils.fitImage(context, holder.placeImg, itemModel.getPlace().getPhotoResponse().getPhotoUrl());
+//        ImageViewUtils.fitImage(context, holder.placeImg, itemModel.getPlace().getPhotoResponse().getPhotoUrl());
     }
 
     public void updatePlace(Item place) {

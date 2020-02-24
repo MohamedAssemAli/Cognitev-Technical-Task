@@ -36,8 +36,8 @@ public class VenuesViewModel extends ViewModel
     private final MutableLiveData<Throwable> loadError = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isFirstRequest = new MutableLiveData<>();
     public final MutableLiveData<Boolean> isPermissionGranted = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isLocationEnabled = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isRealTime = new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isLocationEnabled = new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isRealTime = new MutableLiveData<>();
     public final MutableLiveData<Item> updatedPlace = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isConnected = new MutableLiveData<>();
 
@@ -45,10 +45,9 @@ public class VenuesViewModel extends ViewModel
     // RX vars
     private CompositeDisposable disposable;
 
-    public VenuesViewModel(LocationUtil locationUtil, CompositeDisposable disposable) {
+    public VenuesViewModel(LocationUtil locationUtil) {
         disposable = new CompositeDisposable();
         this.locationUtil = locationUtil;
-        this.disposable = disposable;
     }
 
 
@@ -76,7 +75,7 @@ public class VenuesViewModel extends ViewModel
     public void onSuccess(Item item) {
         updatedPlace.setValue(item);
         Log.d(TAG, "onSuccess: item " + item.getPlace().getName());
-        Log.d(TAG, "onSuccess: item " + item.getPlace().getPhotoResponse().getPhotoUrl());
+//        Log.d(TAG, "onSuccess: item " + item.getPlace().getPhotoResponse().getPhotoUrl());
         isEmptyMutableLiveData.setValue(false);
         onErrorMutableLiveData.setValue(false);
     }
@@ -113,6 +112,10 @@ public class VenuesViewModel extends ViewModel
         return isRealTime.getValue();
     }
 
+    public boolean isLocationEnabled() {
+        return isLocationEnabled.getValue();
+    }
+
     boolean isPermissionGranted() {
         return isPermissionGranted.getValue();
     }
@@ -122,6 +125,7 @@ public class VenuesViewModel extends ViewModel
     }
 
     public void setMode(Boolean mode) {
+
         isRealTime.setValue(mode);
     }
 

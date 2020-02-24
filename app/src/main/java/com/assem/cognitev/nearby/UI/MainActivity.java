@@ -21,6 +21,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -118,28 +120,52 @@ public class MainActivity extends AppCompatActivity
         buildViews.setupLinearVerticalRecView(placesRecyclerView, this);
         placesRecyclerView.setAdapter(venuesAdapter);
 
-
-        venuesViewModel = ViewModelProviders.of(this).get(VenuesViewModel.class);
+        locationUtil = new LocationUtil(this, fusedLocationClient);
+        //Inside MyActivity
+        ViewModelProvider.Factory factory = new ViewModelProvider.Factory() {
+            @NonNull
+            @Override
+            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+                return (T) new VenuesViewModel(locationUtil);
+            }
+        };
+        venuesViewModel = ViewModelProviders.of(this, factory).get(VenuesViewModel.class);
         venuesViewModel.setMode(prefManager.isRealtime());
         venuesViewModel.checkLocationPermissions(new RxPermissions(this));
 
+        venuesViewModel.isPermissionGranted.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean)
+                    venuesViewModel.initLocationService(locationUtil);
+                else
+                    Toast.makeText(MainActivity.this, "Permissions not granted", Toast.LENGTH_LONG).show();
+            }
+        });
+//
+//        if (venuesViewModel.isPermissionGranted())
+//            venuesViewModel.initLocationService(locationUtil);
+//        else
+//            Toast.makeText(this, "Permissions not granted", Toast.LENGTH_LONG).show();
 
-        if (venuesViewModel.isPermissionGranted())
-            venuesViewModel.initLocationService(locationUtil);
-        else
-            Toast.makeText(this, "Permissions not granted", Toast.LENGTH_LONG).show();
+        venuesViewModel.isLocationEnabled.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (!aBoolean)
+                    Toast.makeText(MainActivity.this, getResources().getString(R.string.enable_gps), Toast.LENGTH_LONG).show();
+            }
+        });
 
-
-        // get user location
-        getLocation();
-
-        // get user pref
-        if (prefManager.isRealtime()) {
-            // do Realtime mode work
-            startLocationChangeListener();
-        } else {
-            // do single update mode work
-        }
+//        // get user location
+//        getLocation();
+//
+//        // get user pref
+//        if (prefManager.isRealtime()) {
+//            // do Realtime mode work
+//            startLocationChangeListener();
+//        } else {
+//            // do single update mode work
+//        }
 
 
         // setup viewModel
@@ -172,34 +198,34 @@ public class MainActivity extends AppCompatActivity
     }
 
     // get current user location
-    private void getLocation() {
-        if (hasPermissions()) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            fusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, location -> {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            // Logic to handle location object
-                            Log.d(TAG, "getLocation: location =>" + location.getLatitude() + " - " + location.getLongitude());
-                            getNearByVenues(location);
-                            prefManager.setLastSavedLocation(location);
-                        } else {
-                            isEmpty = true;
-                        }
-                    });
-        } else {
-            Toast.makeText(this, "Something wrong", Toast.LENGTH_SHORT).show();
-            // Ask for one permission
-            EasyPermissions.requestPermissions(
-                    this,
-                    getString(R.string.rationale_location),
-                    RC_LOCATION_PERM,
-                    Manifest.permission.ACCESS_FINE_LOCATION);
-            isEmpty = true;
-        }
-    }
+//    private void getLocation() {
+//        if (hasPermissions()) {
+//            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                return;
+//            }
+//            fusedLocationClient.getLastLocation()
+//                    .addOnSuccessListener(this, location -> {
+//                        // Got last known location. In some rare situations this can be null.
+//                        if (location != null) {
+//                            // Logic to handle location object
+//                            Log.d(TAG, "getLocation: location =>" + location.getLatitude() + " - " + location.getLongitude());
+//                            getNearByVenues(location);
+//                            prefManager.setLastSavedLocation(location);
+//                        } else {
+//                            isEmpty = true;
+//                        }
+//                    });
+//        } else {
+//            Toast.makeText(this, "Something wrong", Toast.LENGTH_SHORT).show();
+//            // Ask for one permission
+//            EasyPermissions.requestPermissions(
+//                    this,
+//                    getString(R.string.rationale_location),
+//                    RC_LOCATION_PERM,
+//                    Manifest.permission.ACCESS_FINE_LOCATION);
+//            isEmpty = true;
+//        }
+//    }
 
     // call ViewModel actions
     private void getNearByVenues(Location location) {
@@ -274,7 +300,7 @@ public class MainActivity extends AppCompatActivity
 
         if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
             if (hasPermissions()) {
-                getLocation();
+//                getLocation();
             }
         }
     }

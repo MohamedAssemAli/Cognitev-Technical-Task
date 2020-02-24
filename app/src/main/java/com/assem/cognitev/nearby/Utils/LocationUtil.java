@@ -68,7 +68,6 @@ public class LocationUtil {
 
     public void requestLocation(Boolean isRealTime) {
         LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         if (isRealTime) {
             // Realtime mode

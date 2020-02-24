@@ -1,5 +1,6 @@
 package com.assem.cognitev.nearby.UI;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,6 +40,7 @@ public class VenuesAdapter extends RecyclerView.Adapter<VenuesAdapter.PlaceHolde
         return new PlaceHolder(item);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull PlaceHolder holder, int position) {
         final Item itemModel = itemsArrayList.get(position);

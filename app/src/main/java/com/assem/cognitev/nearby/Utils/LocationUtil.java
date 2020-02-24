@@ -19,19 +19,19 @@ public class LocationUtil {
 
     private final String TAG = LocationUtil.class.getSimpleName();
 
-    // location module
     private Context context;
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
     private LocationListener locationListener;
+    private LocationRequest locationRequest;
     private long UPDATE_INTERVAL = 10 * 3000;  /* 60 secs */
     private long FASTEST_INTERVAL = 10 * 3000; /* 30 sec */
 
-    public LocationUtil(Context context, FusedLocationProviderClient fusedLocationClient) {
+    public LocationUtil(Context context, FusedLocationProviderClient fusedLocationClient, LocationRequest locationRequest) {
         this.context = context;
         this.fusedLocationClient = fusedLocationClient;
+        this.locationRequest = locationRequest;
     }
-
 
     public void setLocationCallBacks(LocationListener locationListener) {
         this.locationListener = locationListener;
@@ -67,16 +67,14 @@ public class LocationUtil {
     }
 
     public void requestLocation(Boolean isRealTime) {
-        LocationRequest mLocationRequest = new LocationRequest();
-
         if (isRealTime) {
             // Realtime mode
-            mLocationRequest.setSmallestDisplacement(500);
+            locationRequest.setSmallestDisplacement(500);
         } else
             // Single mode
-            mLocationRequest.setNumUpdates(1);
+            locationRequest.setNumUpdates(1);
 
-        mLocationRequest
+        locationRequest
                 .setFastestInterval(FASTEST_INTERVAL)
                 .setInterval(UPDATE_INTERVAL)
                 .setFastestInterval(FASTEST_INTERVAL)
@@ -84,13 +82,13 @@ public class LocationUtil {
 
         // Create LocationSettingsRequest object using location request
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
-        builder.addLocationRequest(mLocationRequest);
+        builder.addLocationRequest(locationRequest);
         LocationSettingsRequest locationSettingsRequest = builder.build();
         SettingsClient settingsClient = LocationServices.getSettingsClient(context);
         settingsClient.checkLocationSettings(locationSettingsRequest);
 
         createLocationCallback();
-        fusedLocationClient.requestLocationUpdates(mLocationRequest, locationCallback, Looper.myLooper());
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
     }
 
     private boolean isDistanceChanged(Location oldLocation, Location newLocation) {

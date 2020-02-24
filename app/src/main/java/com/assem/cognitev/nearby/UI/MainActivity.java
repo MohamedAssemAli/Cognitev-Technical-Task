@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity
     private final int RC_LOCATION_PERM = 124;
     private String[] permissionsList = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
     private FusedLocationProviderClient fusedLocationClient;
-    private LocationRequest locationRequest;
+    LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private long UPDATE_INTERVAL = 10 * 6000;  /* 60 secs */
     private long FASTEST_INTERVAL = 10 * 3000; /* 6 sec */
@@ -108,11 +108,12 @@ public class MainActivity extends AppCompatActivity
         buildViews = new BuildViews();
         venuesAdapter = new VenuesAdapter(this);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        locationRequest = new LocationRequest();
         // setup recyclerView
         buildViews.setupLinearVerticalRecView(placesRecyclerView, this);
         placesRecyclerView.setAdapter(venuesAdapter);
         disposable = new CompositeDisposable();
-        locationUtil = new LocationUtil(this, fusedLocationClient);
+        locationUtil = new LocationUtil(this, fusedLocationClient, locationRequest);
         //Inside MyActivity
         ViewModelProvider.Factory factory = new ViewModelProvider.Factory() {
             @NonNull
@@ -125,14 +126,11 @@ public class MainActivity extends AppCompatActivity
         venuesViewModel.setMode(prefManager.isRealtime());
         venuesViewModel.checkLocationPermissions(new RxPermissions(this));
 
-        venuesViewModel.isPermissionGranted.observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean)
-                    venuesViewModel.initLocationService(locationUtil);
-                else
-                    Toast.makeText(MainActivity.this, "Permissions not granted", Toast.LENGTH_LONG).show();
-            }
+        venuesViewModel.isPermissionGranted.observe(this, aBoolean -> {
+            if (aBoolean)
+                venuesViewModel.initLocationService(locationUtil);
+            else
+                Toast.makeText(MainActivity.this, "Permissions not granted", Toast.LENGTH_LONG).show();
         });
 
         venuesViewModel.isLocationEnabled.observe(this, new Observer<Boolean>() {
@@ -232,15 +230,18 @@ public class MainActivity extends AppCompatActivity
             case R.id.menu_item_realtime:
                 Toast.makeText(this, "Realtime mode started!", Toast.LENGTH_LONG).show();
                 prefManager.setRealtime(true);
-//                startLocationChangeListener();
+                venuesViewModel.onChangeModeListener(true);
+                locationRequest.setSmallestDisplacement(500);
+                toggleLayout(true);
                 return true;
             case R.id.menu_item_single_update:
                 Toast.makeText(this, "Single update mode started!", Toast.LENGTH_LONG).show();
                 prefManager.setRealtime(false);
+                venuesViewModel.onChangeModeListener(false);
                 if (locationCallback != null)
                     fusedLocationClient.removeLocationUpdates(locationCallback);
-                Location lastSaveLocation = prefManager.getLastSavedLocation();
-                getNearByVenues(lastSaveLocation);
+                locationRequest.setNumUpdates(1);
+                toggleLayout(true);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

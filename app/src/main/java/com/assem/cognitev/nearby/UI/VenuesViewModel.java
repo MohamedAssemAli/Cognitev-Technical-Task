@@ -28,7 +28,6 @@ public class VenuesViewModel extends ViewModel
     private LocationUtil locationUtil;
     MutableLiveData<Boolean> isEmptyMutableLiveData = new MutableLiveData<>();
     MutableLiveData<Boolean> onErrorMutableLiveData = new MutableLiveData<>();
-    // test
     public final MutableLiveData<List<Item>> places = new MutableLiveData<>();
     private final MutableLiveData<Throwable> loadError = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isFirstRequest = new MutableLiveData<>();
@@ -37,8 +36,6 @@ public class VenuesViewModel extends ViewModel
     public final MutableLiveData<Boolean> isRealTime = new MutableLiveData<>();
     public final MutableLiveData<Item> updatedPlace = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isConnected = new MutableLiveData<>();
-
-
     // RX vars
     private CompositeDisposable disposable;
 
@@ -70,7 +67,6 @@ public class VenuesViewModel extends ViewModel
         onErrorMutableLiveData.setValue(false);
     }
 
-
     public Observable<Item> getPhotoObservable(Item place) {
         return VenuesClient.getClient().getVenuePhotosRes(place.getPlace().getId())
                 .map(photoResponse -> {
@@ -79,7 +75,6 @@ public class VenuesViewModel extends ViewModel
                 })
                 .subscribeOn(Schedulers.io());
     }
-
 
     private Observable<PlacesResponse> placesResponseObservable(Location location) {
         return VenuesClient.getClient().getVenuesRes(location)
@@ -109,13 +104,11 @@ public class VenuesViewModel extends ViewModel
         return isPermissionGranted.getValue();
     }
 
-
     void initLocationService(LocationUtil locationUtil) {
         requestLocationUpdates();
     }
 
     public void setMode(Boolean mode) {
-
         isRealTime.setValue(mode);
     }
 

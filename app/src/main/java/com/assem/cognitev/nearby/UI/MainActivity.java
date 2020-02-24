@@ -1,8 +1,6 @@
 package com.assem.cognitev.nearby.UI;
 
-import android.Manifest;
 import android.content.IntentFilter;
-import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.ContentLoadingProgressBar;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
@@ -80,8 +77,6 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
         init();
-
-        Log.d(TAG, "onCreate: Location => " + prefManager.getLastSavedLocation().toString());
     }
 
     @Override
@@ -104,13 +99,14 @@ public class MainActivity extends AppCompatActivity
         buildViews = new BuildViews();
         venuesAdapter = new VenuesAdapter(this);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        locationCallback = new LocationCallback();
         locationRequest = new LocationRequest();
         // setup recyclerView
         buildViews.setupLinearVerticalRecView(placesRecyclerView, this);
         placesRecyclerView.setAdapter(venuesAdapter);
         disposable = new CompositeDisposable();
         locationUtil = new LocationUtil(this, fusedLocationClient, locationRequest);
-        //Inside MyActivity
+        // setup viewModel
         ViewModelProvider.Factory factory = new ViewModelProvider.Factory() {
             @NonNull
             @Override
@@ -121,27 +117,22 @@ public class MainActivity extends AppCompatActivity
         venuesViewModel = ViewModelProviders.of(this, factory).get(VenuesViewModel.class);
         venuesViewModel.setMode(prefManager.isRealtime());
         venuesViewModel.checkLocationPermissions(new RxPermissions(this));
-
         venuesViewModel.isPermissionGranted.observe(this, aBoolean -> {
             if (aBoolean)
                 venuesViewModel.initLocationService(locationUtil);
             else
                 Toast.makeText(MainActivity.this, "Permissions not granted", Toast.LENGTH_LONG).show();
         });
-
         venuesViewModel.isLocationEnabled.observe(this, aBoolean -> {
             if (!aBoolean)
                 Toast.makeText(MainActivity.this, getResources().getString(R.string.enable_gps), Toast.LENGTH_LONG).show();
         });
-
-        // setup viewModel
         venuesViewModel.places.observe(this, items -> {
             if (items != null) {
                 venuesAdapter.setList(items);
                 toggleLayout(true);
             }
         });
-
         venuesViewModel.updatedPlace.observe(this, item -> {
             if (item != null) {
                 Log.d(TAG, "onChanged: " + item.getPlace().getPhotoResponse().getPhotoUrl());
@@ -149,13 +140,11 @@ public class MainActivity extends AppCompatActivity
                 toggleLayout(true);
             }
         });
-
         venuesViewModel.isEmptyMutableLiveData.observe(this, aBoolean -> {
             Log.d(TAG, "init: isEmpty => " + aBoolean);
             isEmpty = aBoolean;
             toggleLayout(true);
         });
-
         venuesViewModel.onErrorMutableLiveData.observe(this, aBoolean -> {
             Log.d(TAG, "init: isEmpty => " + aBoolean);
             onRequestError = aBoolean;
@@ -176,26 +165,33 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         switch (id) {
             case R.id.menu_item_realtime:
-                Toast.makeText(this, "Realtime mode started!", Toast.LENGTH_LONG).show();
-                prefManager.setRealtime(true);
-                venuesViewModel.onChangeModeListener(true);
-                locationRequest.setSmallestDisplacement(500);
-                toggleLayout(true);
+                startRealtimeMode();
                 return true;
             case R.id.menu_item_single_update:
-                Toast.makeText(this, "Single update mode started!", Toast.LENGTH_LONG).show();
-                prefManager.setRealtime(false);
-                venuesViewModel.onChangeModeListener(false);
-                if (locationCallback != null)
-                    fusedLocationClient.removeLocationUpdates(locationCallback);
-                locationRequest.setNumUpdates(1);
-                toggleLayout(true);
+                startSingleUpdateMode();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    private void startRealtimeMode() {
+        Toast.makeText(this, "Realtime mode started!", Toast.LENGTH_LONG).show();
+        prefManager.setRealtime(true);
+        venuesViewModel.onChangeModeListener(true);
+        locationRequest.setSmallestDisplacement(500);
+        toggleLayout(true);
+    }
+
+    private void startSingleUpdateMode() {
+        Toast.makeText(this, "Single update mode started!", Toast.LENGTH_LONG).show();
+        prefManager.setRealtime(false);
+        venuesViewModel.onChangeModeListener(false);
+        if (locationCallback != null)
+            fusedLocationClient.removeLocationUpdates(locationCallback);
+        locationRequest.setNumUpdates(1);
+        toggleLayout(true);
+    }
 
     // handle data retrieving & rendering / no data retrieved
     private void toggleLayout(boolean flag) {

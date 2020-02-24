@@ -66,7 +66,7 @@ public class VenuesViewModel extends ViewModel
                         .subscribeWith(new DisposableObserver<PlacesResponse>() {
                             @Override
                             public void onNext(PlacesResponse placesResponse) {
-                                places.setValue(placesResponse.getItems());
+                                places.postValue(placesResponse.getItems());
                             }
 
                             @Override
@@ -82,22 +82,21 @@ public class VenuesViewModel extends ViewModel
         );
 
 //        disposable.add(
-//        placesResponseObservable(location)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .flatMap(new Function<PlacesResponse, ObservableSource<Place>>() {
-//                    @Override
-//                    public ObservableSource<Place> apply(PlacesResponse placesResponse) throws Exception {
-//                        return null;
-//                    }
-//                })
+//                placesResponseObservable(location)
+//                        .subscribeOn(Schedulers.io())
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .flatMap(new Function<PlacesResponse, ObservableSource<Item>>() {
+//                            @Override
+//                            public ObservableSource<Item> apply(PlacesResponse placesResponse) throws Exception {
+//                                return null;
+//                            }
+//                        })
 //        );
     }
 
     public void fetchPlaces(Location location) {
         disposable.add(placesResponseObservable(location)
                 .subscribeOn(Schedulers.io())
-                .replay()
                 .flatMapIterable(PlacesResponse::getItems)
                 .concatMap(this::getPhotoObservable)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -121,18 +120,13 @@ public class VenuesViewModel extends ViewModel
 
     public Observable<Item> getPhotoObservable(Item place) {
         return VenuesClient.getClient().getVenuePhotosRes(place.getPlace().getId())
-                .map(photoRespone -> {
-                    place.getPlace().setPhotoResponse(photoRespone);
+                .map(photoResponse -> {
+                    place.getPlace().setPhotoResponse(photoResponse);
                     return place;
                 })
                 .subscribeOn(Schedulers.io());
     }
 
-
-    private void showPlaces(PlacesResponse response) {
-        places.postValue(response.getResponse().getGroups().get(0).getItems());
-        isFirstRequest.postValue(false);
-    }
 
     private Observable<PlacesResponse> placesResponseObservable(Location location) {
         return VenuesClient.getClient().getVenuesRes(location)
@@ -144,6 +138,11 @@ public class VenuesViewModel extends ViewModel
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    private void showPlaces(PlacesResponse response) {
+        places.postValue(response.getResponse().getGroups().get(0).getItems());
+        isFirstRequest.postValue(false);
+        Log.d(TAG, "showPlaces: response => " + response.getItems());
+    }
 
     public boolean isRealTIme() {
         return isRealTime.getValue();
@@ -156,6 +155,7 @@ public class VenuesViewModel extends ViewModel
     boolean isPermissionGranted() {
         return isPermissionGranted.getValue();
     }
+
 
     void initLocationService(LocationUtil locationUtil) {
         requestLocationUpdates();

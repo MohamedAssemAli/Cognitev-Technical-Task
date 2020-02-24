@@ -1,6 +1,7 @@
 package com.assem.cognitev.nearby.UI;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ import butterknife.ButterKnife;
 
 public class VenuesAdapter extends RecyclerView.Adapter<VenuesAdapter.PlaceHolder> {
 
+    private final String TAG = VenuesAdapter.class.getSimpleName();
+
     private Context context;
     private List<Item> itemsArrayList = new ArrayList<>();
 
@@ -42,28 +45,16 @@ public class VenuesAdapter extends RecyclerView.Adapter<VenuesAdapter.PlaceHolde
         holder.placeTitle.setText(itemModel.getPlace().getName());
         holder.placeAddress.setText(itemModel.getPlace().getCategories().get(0).getName()
                 + " - " + itemModel.getPlace().getLocation().getFormatted_address().toString());
-//        ImageViewUtils.fitImage(context, holder.placeImg, itemModel.getPlace().getPhotoResponse().getPhotoUrl());
-    }
-
-    public void updatePlace(Item place) {
-        itemsArrayList.add(place);
-        notifyDataSetChanged();
+        try {
+            ImageViewUtils.fitImage(context, holder.placeImg, itemModel.getPlace().getPhotoResponse().getPhotoUrl());
+        } catch (Exception e) {
+            Log.d(TAG, "onBindViewHolder: null");
+        }
     }
 
     @Override
     public int getItemCount() {
         return itemsArrayList.size();
-    }
-
-    public void setList(List<Item> itemsArrayList) {
-        this.itemsArrayList = itemsArrayList;
-        notifyDataSetChanged();
-    }
-
-    public void clearList(ArrayList<Item> itemsArrayList) {
-        this.itemsArrayList = itemsArrayList;
-        itemsArrayList.clear();
-        notifyDataSetChanged();
     }
 
     class PlaceHolder extends RecyclerView.ViewHolder {
@@ -79,5 +70,20 @@ public class VenuesAdapter extends RecyclerView.Adapter<VenuesAdapter.PlaceHolde
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    public void setList(List<Item> itemsArrayList) {
+        this.itemsArrayList = itemsArrayList;
+        notifyDataSetChanged();
+    }
+
+    public void updatePlace(Item item) {
+        itemsArrayList.set(itemsArrayList.indexOf(item), item);
+        notifyItemChanged(itemsArrayList.indexOf(item));
+    }
+
+    public void clearList(ArrayList<Item> itemsArrayList) {
+        itemsArrayList.clear();
+        notifyDataSetChanged();
     }
 }

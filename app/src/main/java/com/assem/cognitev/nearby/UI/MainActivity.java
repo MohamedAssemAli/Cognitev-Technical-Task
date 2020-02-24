@@ -171,21 +171,21 @@ public class MainActivity extends AppCompatActivity
 
 
         // setup viewModel
-        venuesViewModel.updatedPlace.observe(this, new Observer<Item>() {
-            @Override
-            public void onChanged(Item item) {
-                if (item != null) {
-                    venuesAdapter.updatePlace(item);
-                    toggleLayout(true);
-                }
+        venuesViewModel.places.observe(this, items -> {
+            if (items != null) {
+                venuesAdapter.setList(items);
+                toggleLayout(true);
             }
         });
-//        venuesViewModel.places.observe(this, items -> {
-//            if (items != null) {
-//                venuesAdapter.setList(items);
-//                toggleLayout(true);
-//            }
-//        });
+
+        venuesViewModel.updatedPlace.observe(this, item -> {
+            if (item != null) {
+                Log.d(TAG, "onChanged: " + item.getPlace().getPhotoResponse().getPhotoUrl());
+                venuesAdapter.updatePlace(item);
+                toggleLayout(true);
+            }
+        });
+
         venuesViewModel.isEmptyMutableLiveData.observe(this, aBoolean -> {
             Log.d(TAG, "init: isEmpty => " + aBoolean);
             isEmpty = aBoolean;
@@ -300,11 +300,7 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
-            if (hasPermissions()) {
-//                getLocation();
-            }
-        }
+
     }
 
     // inflate mainMenu

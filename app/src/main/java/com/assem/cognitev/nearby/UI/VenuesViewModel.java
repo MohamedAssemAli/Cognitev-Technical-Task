@@ -1,48 +1,26 @@
 package com.assem.cognitev.nearby.UI;
 
-<<<<<<< Updated upstream
-import android.annotation.SuppressLint;
-=======
+
 import android.Manifest;
->>>>>>> Stashed changes
 import android.location.Location;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.assem.cognitev.nearby.App.AppConfig;
 import com.assem.cognitev.nearby.Data.VenuesClient;
-<<<<<<< Updated upstream
-import com.assem.cognitev.nearby.Models.Photos.VenuePhoto;
-import com.assem.cognitev.nearby.Models.Responses.places.Item;
-import com.assem.cognitev.nearby.Models.Responses.places.PlacesResponse;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-=======
 import com.assem.cognitev.nearby.Helper.PrefManager;
 import com.assem.cognitev.nearby.Models.places.Item;
 import com.assem.cognitev.nearby.Models.places.PlacesResponse;
 import com.assem.cognitev.nearby.Utils.LocationUtil;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
->>>>>>> Stashed changes
 
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-<<<<<<< Updated upstream
-import io.reactivex.functions.Function;
-import io.reactivex.internal.operators.observable.ObservableAll;
-import io.reactivex.observables.ConnectableObservable;
-import io.reactivex.observers.DisposableObserver;
-=======
->>>>>>> Stashed changes
 import io.reactivex.schedulers.Schedulers;
 
 public class VenuesViewModel extends ViewModel
@@ -98,7 +76,7 @@ public class VenuesViewModel extends ViewModel
     public void onSuccess(Item item) {
         updatedPlace.setValue(item);
         Log.d(TAG, "onSuccess: item " + item.getPlace().getName());
-        Log.d(TAG, "onSuccess: item " + item.getPlace().getPhotoRespone().getPhotoUrl());
+        Log.d(TAG, "onSuccess: item " + item.getPlace().getPhotoResponse().getPhotoUrl());
         isEmptyMutableLiveData.setValue(false);
         onErrorMutableLiveData.setValue(false);
     }
@@ -108,7 +86,7 @@ public class VenuesViewModel extends ViewModel
     getPhotoObservable(Item place) {
         return VenuesClient.getClient().getVenuePhotosRes(place.getPlace().getId())
                 .map(photoRespone -> {
-                    place.getPlace().setPhotoRespone(photoRespone);
+                    place.getPlace().setPhotoResponse(photoRespone);
                     return place;
                 })
                 .subscribeOn(Schedulers.io());

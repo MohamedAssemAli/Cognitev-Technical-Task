@@ -1,7 +1,7 @@
 package com.assem.cognitev.nearby.Data;
 
 import com.assem.cognitev.nearby.App.AppConfig;
-import com.assem.cognitev.nearby.Models.photos.PhotoRespone;
+import com.assem.cognitev.nearby.Models.Photos.PhotoResponse;
 import com.assem.cognitev.nearby.Models.places.PlacesResponse;
 import com.google.gson.JsonObject;
 
@@ -50,7 +50,7 @@ https://api.foursquare.com/v2/venues/search?ll=40.7,-74&client_id=QI3JN03II2AEFX
              @Query(AppConfig.VERSION) String version);
 
     @GET("venues/{venue_id}/photos")
-    public Single<PhotoRespone> getVenuePhotosRes
+    public Single<PhotoResponse> getVenuePhotosRes
             (@Path(AppConfig.VENUE_ID) String venueId,
              @Query(AppConfig.CLIENT_ID) String clientId,
              @Query(AppConfig.CLIENT_SECRET) String clientSecret,

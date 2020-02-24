@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 import android.location.Location;
 
 import com.assem.cognitev.nearby.App.AppConfig;
-import com.assem.cognitev.nearby.Models.photos.PhotoRespone;
+import com.assem.cognitev.nearby.Models.Photos.PhotoResponse;
 import com.assem.cognitev.nearby.Models.places.PlacesResponse;
 import com.google.gson.JsonObject;
 
@@ -82,7 +82,7 @@ public class VenuesClient {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<PhotoRespone> getVenuePhotosRes(String venueId) {
+    public Observable<PhotoResponse> getVenuePhotosRes(String venueId) {
         return venuesInterface
                 .getVenuePhotosRes(
                         venueId,

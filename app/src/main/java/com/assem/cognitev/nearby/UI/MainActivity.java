@@ -26,15 +26,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.assem.cognitev.nearby.App.MyApplication;
 import com.assem.cognitev.nearby.Helper.PrefManager;
-import com.assem.cognitev.nearby.Models.Responses.places.Item;
+import com.assem.cognitev.nearby.Models.places.Item;
 import com.assem.cognitev.nearby.R;
 import com.assem.cognitev.nearby.Utils.BuildViews;
 import com.assem.cognitev.nearby.Utils.ConnectivityReceiver;
+import com.assem.cognitev.nearby.Utils.LocationUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.util.List;
 
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity
     // pref instances
     private PrefManager prefManager;
     // location module
+    private LocationUtil locationUtil;
     private final int RC_LOCATION_PERM = 124;
     private String[] permissionsList = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
     private FusedLocationProviderClient fusedLocationClient;
@@ -111,10 +114,21 @@ public class MainActivity extends AppCompatActivity
         buildViews = new BuildViews();
         venuesAdapter = new VenuesAdapter(this);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        venuesViewModel = ViewModelProviders.of(this).get(VenuesViewModel.class);
         // setup recyclerView
         buildViews.setupLinearVerticalRecView(placesRecyclerView, this);
         placesRecyclerView.setAdapter(venuesAdapter);
+
+
+        venuesViewModel = ViewModelProviders.of(this).get(VenuesViewModel.class);
+        venuesViewModel.setMode(prefManager.isRealtime());
+        venuesViewModel.checkLocationPermissions(new RxPermissions(this));
+
+
+        if (venuesViewModel.isPermissionGranted())
+            venuesViewModel.initLocationService(locationUtil);
+        else
+            Toast.makeText(this, "Permissions not granted", Toast.LENGTH_LONG).show();
+
 
         // get user location
         getLocation();
@@ -189,9 +203,6 @@ public class MainActivity extends AppCompatActivity
 
     // call ViewModel actions
     private void getNearByVenues(Location location) {
-//        venuesViewModel.getVenues(location);
-//        venuesViewModel.getVenues_(location);
-//        venuesViewModel.getVenuePhotos("55084193498eded0dc36c1e0");
         venuesViewModel.fetchPlaces(location);
     }
 

@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.assem.cognitev.nearby.Models.Responses.places.Item;
+import com.assem.cognitev.nearby.Models.places.Item;
 import com.assem.cognitev.nearby.R;
 import com.assem.cognitev.nearby.Utils.ImageViewUtils;
 

@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel;
 import com.assem.cognitev.nearby.Data.VenuesClient;
 import com.assem.cognitev.nearby.Helper.PrefManager;
 import com.assem.cognitev.nearby.Models.places.Item;
+import com.assem.cognitev.nearby.Models.places.Place;
 import com.assem.cognitev.nearby.Models.places.PlacesResponse;
 import com.assem.cognitev.nearby.Utils.LocationUtil;
 import com.blankj.utilcode.util.NetworkUtils;
@@ -19,8 +20,14 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposables;
+import io.reactivex.functions.Function;
+import io.reactivex.observables.ConnectableObservable;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 public class VenuesViewModel extends ViewModel
@@ -32,6 +39,7 @@ public class VenuesViewModel extends ViewModel
     MutableLiveData<Boolean> isEmptyMutableLiveData = new MutableLiveData<>();
     MutableLiveData<Boolean> onErrorMutableLiveData = new MutableLiveData<>();
     // test
+
     public final MutableLiveData<List<Item>> places = new MutableLiveData<>();
     private final MutableLiveData<Throwable> loadError = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isFirstRequest = new MutableLiveData<>();
@@ -45,23 +53,53 @@ public class VenuesViewModel extends ViewModel
     // RX vars
     private CompositeDisposable disposable;
 
-    public VenuesViewModel(LocationUtil locationUtil) {
-        disposable = new CompositeDisposable();
+    public VenuesViewModel(LocationUtil locationUtil, CompositeDisposable disposable) {
+        this.disposable = disposable;
         this.locationUtil = locationUtil;
     }
 
 
-    /**
-     * Complex situation , we need to fetch photo for each place
-     * flatmap operator solve the problem when we have  request depend on the result of the anther one
-     * //
-     */
+    private void fetch(Location location) {
+        disposable.add(
+                placesResponseObservable(location)
+                        .subscribeOn(Schedulers.io())
+                        .subscribeWith(new DisposableObserver<PlacesResponse>() {
+                            @Override
+                            public void onNext(PlacesResponse placesResponse) {
+                                places.setValue(placesResponse.getItems());
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e(TAG, "onError: ", e);
+                            }
+
+                            @Override
+                            public void onComplete() {
+
+                            }
+                        })
+        );
+
+//        disposable.add(
+//        placesResponseObservable(location)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .flatMap(new Function<PlacesResponse, ObservableSource<Place>>() {
+//                    @Override
+//                    public ObservableSource<Place> apply(PlacesResponse placesResponse) throws Exception {
+//                        return null;
+//                    }
+//                })
+//        );
+    }
 
     public void fetchPlaces(Location location) {
         disposable.add(placesResponseObservable(location)
                 .subscribeOn(Schedulers.io())
+                .replay()
                 .flatMapIterable(PlacesResponse::getItems)
-                .flatMap(this::getPhotoObservable)
+                .concatMap(this::getPhotoObservable)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onSuccess, this::onError));
     }
@@ -75,14 +113,13 @@ public class VenuesViewModel extends ViewModel
     public void onSuccess(Item item) {
         updatedPlace.setValue(item);
         Log.d(TAG, "onSuccess: item " + item.getPlace().getName());
-//        Log.d(TAG, "onSuccess: item " + item.getPlace().getPhotoResponse().getPhotoUrl());
+        Log.d(TAG, "onSuccess: item " + item.getPlace().getPhotoResponse());
         isEmptyMutableLiveData.setValue(false);
         onErrorMutableLiveData.setValue(false);
     }
 
 
-    public Observable<Item>
-    getPhotoObservable(Item place) {
+    public Observable<Item> getPhotoObservable(Item place) {
         return VenuesClient.getClient().getVenuePhotosRes(place.getPlace().getId())
                 .map(photoRespone -> {
                     place.getPlace().setPhotoResponse(photoRespone);

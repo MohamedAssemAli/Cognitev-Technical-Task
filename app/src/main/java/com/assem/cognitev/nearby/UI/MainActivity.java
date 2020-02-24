@@ -44,6 +44,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.disposables.CompositeDisposable;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity
     private LocationCallback locationCallback;
     private long UPDATE_INTERVAL = 10 * 6000;  /* 60 secs */
     private long FASTEST_INTERVAL = 10 * 3000; /* 6 sec */
+    private CompositeDisposable disposable;
     // vars
     private boolean isEmpty = false;
     private boolean onRequestError = false;
@@ -119,14 +121,14 @@ public class MainActivity extends AppCompatActivity
         // setup recyclerView
         buildViews.setupLinearVerticalRecView(placesRecyclerView, this);
         placesRecyclerView.setAdapter(venuesAdapter);
-
+        disposable = new CompositeDisposable();
         locationUtil = new LocationUtil(this, fusedLocationClient);
         //Inside MyActivity
         ViewModelProvider.Factory factory = new ViewModelProvider.Factory() {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new VenuesViewModel(locationUtil);
+                return (T) new VenuesViewModel(locationUtil, disposable);
             }
         };
         venuesViewModel = ViewModelProviders.of(this, factory).get(VenuesViewModel.class);
@@ -383,5 +385,11 @@ public class MainActivity extends AppCompatActivity
             Log.d(TAG, "onNetworkConnectionChanged: No network connection!");
             somethingWrongLayout.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        disposable.dispose();
     }
 }

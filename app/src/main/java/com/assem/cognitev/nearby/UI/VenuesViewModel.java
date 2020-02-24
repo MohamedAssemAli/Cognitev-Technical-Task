@@ -20,7 +20,6 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 public class VenuesViewModel extends ViewModel
@@ -47,42 +46,6 @@ public class VenuesViewModel extends ViewModel
     public VenuesViewModel(LocationUtil locationUtil, CompositeDisposable disposable) {
         this.disposable = disposable;
         this.locationUtil = locationUtil;
-    }
-
-
-    private void fetch(Location location) {
-        disposable.add(
-                placesResponseObservable(location)
-                        .subscribeOn(Schedulers.io())
-                        .subscribeWith(new DisposableObserver<PlacesResponse>() {
-                            @Override
-                            public void onNext(PlacesResponse placesResponse) {
-                                places.postValue(placesResponse.getItems());
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.e(TAG, "onError: ", e);
-                            }
-
-                            @Override
-                            public void onComplete() {
-
-                            }
-                        })
-        );
-
-//        disposable.add(
-//                placesResponseObservable(location)
-//                        .subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .flatMap(new Function<PlacesResponse, ObservableSource<Item>>() {
-//                            @Override
-//                            public ObservableSource<Item> apply(PlacesResponse placesResponse) throws Exception {
-//                                return null;
-//                            }
-//                        })
-//        );
     }
 
     public void fetchPlaces(Location location) {

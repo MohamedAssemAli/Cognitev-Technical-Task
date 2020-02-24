@@ -1,8 +1,25 @@
 package com.assem.cognitev.nearby.UI;
 
+import android.Manifest;
+import android.location.Location;
+import android.util.Log;
+
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+
+import com.assem.cognitev.nearby.Data.VenuesClient;
+import com.assem.cognitev.nearby.Models.places.Item;
+import com.assem.cognitev.nearby.Models.places.PlacesResponse;
+import com.assem.cognitev.nearby.Utils.LocationUtil;
+import com.blankj.utilcode.util.NetworkUtils;
+import com.tbruyelle.rxpermissions2.RxPermissions;
+
+import java.util.List;
+
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class VenuesViewModel extends ViewModel
         implements LocationUtil.LocationListener {

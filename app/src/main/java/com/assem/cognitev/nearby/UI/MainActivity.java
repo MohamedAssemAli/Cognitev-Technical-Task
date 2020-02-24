@@ -51,13 +51,9 @@ public class MainActivity extends AppCompatActivity
     private PrefManager prefManager;
     // location module
     private LocationUtil locationUtil;
-    private final int RC_LOCATION_PERM = 124;
-    private String[] permissionsList = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
     private FusedLocationProviderClient fusedLocationClient;
-    LocationRequest locationRequest;
     private LocationCallback locationCallback;
-    private long UPDATE_INTERVAL = 10 * 6000;  /* 60 secs */
-    private long FASTEST_INTERVAL = 10 * 3000; /* 6 sec */
+    private LocationRequest locationRequest;
     private CompositeDisposable disposable;
     // vars
     private boolean isEmpty = false;
@@ -133,22 +129,10 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(MainActivity.this, "Permissions not granted", Toast.LENGTH_LONG).show();
         });
 
-        venuesViewModel.isLocationEnabled.observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (!aBoolean)
-                    Toast.makeText(MainActivity.this, getResources().getString(R.string.enable_gps), Toast.LENGTH_LONG).show();
-            }
+        venuesViewModel.isLocationEnabled.observe(this, aBoolean -> {
+            if (!aBoolean)
+                Toast.makeText(MainActivity.this, getResources().getString(R.string.enable_gps), Toast.LENGTH_LONG).show();
         });
-
-//        // get user pref
-//        if (prefManager.isRealtime()) {
-//            // do Realtime mode work
-//            startLocationChangeListener();
-//        } else {
-//            // do single update mode work
-//        }
-
 
         // setup viewModel
         venuesViewModel.places.observe(this, items -> {
@@ -178,42 +162,6 @@ public class MainActivity extends AppCompatActivity
             toggleLayout(true);
         });
     }
-
-    // call ViewModel actions
-    private void getNearByVenues(Location location) {
-        venuesViewModel.fetchPlaces(location);
-    }
-
-//    private void startLocationChangeListener() {
-//        locationRequest = new LocationRequest()
-//                .setInterval(UPDATE_INTERVAL)
-//                .setFastestInterval(FASTEST_INTERVAL)
-//                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-//
-//        locationCallback = new LocationCallback() {
-//            @Override
-//            public void onLocationResult(LocationResult locationResult) {
-//                if (locationResult == null) {
-//                    return;
-//                }
-//                for (Location location : locationResult.getLocations()) {
-//                    // Update UI with location data
-//                    // ...
-//                    Log.d(TAG, "onLocationResult: new location =>" + location.getLatitude() + " - " + location.getLongitude());
-//                    Location lastSaveLocation = prefManager.getLastSavedLocation();
-//                    if (lastSaveLocation != null)
-//                        if (isDistanceChanged(lastSaveLocation, location)) {
-//                            prefManager.setLastSavedLocation(location);
-//                        }
-//                    getNearByVenues(location);
-//                }
-//            }
-//        };
-//        fusedLocationClient.requestLocationUpdates(locationRequest,
-//                locationCallback,
-//                Looper.getMainLooper());
-//
-//    }
 
     // inflate mainMenu
     @Override

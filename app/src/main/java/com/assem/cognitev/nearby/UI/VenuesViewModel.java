@@ -30,7 +30,6 @@ public class VenuesViewModel extends ViewModel
     MutableLiveData<Boolean> onErrorMutableLiveData = new MutableLiveData<>();
     public final MutableLiveData<List<Item>> places = new MutableLiveData<>();
     private final MutableLiveData<Throwable> loadError = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isFirstRequest = new MutableLiveData<>();
     public final MutableLiveData<Boolean> isPermissionGranted = new MutableLiveData<>();
     public final MutableLiveData<Boolean> isLocationEnabled = new MutableLiveData<>();
     public final MutableLiveData<Boolean> isRealTime = new MutableLiveData<>();
@@ -55,7 +54,6 @@ public class VenuesViewModel extends ViewModel
 
     public void onError(Throwable throwable) {
         loadError.postValue(throwable);
-        isFirstRequest.postValue(false);
         Log.d(TAG, "onError: ", throwable);
     }
 
@@ -88,7 +86,6 @@ public class VenuesViewModel extends ViewModel
 
     private void showPlaces(PlacesResponse response) {
         places.postValue(response.getResponse().getGroups().get(0).getItems());
-        isFirstRequest.postValue(false);
         Log.d(TAG, "showPlaces: response => " + response.getItems());
     }
 
@@ -128,8 +125,6 @@ public class VenuesViewModel extends ViewModel
     private void requestLocationUpdates() {
         if (isLocationEnabled.getValue())
             locationUtil.requestLocation(isRealTime.getValue());
-        else
-            isFirstRequest.setValue(false);
         locationUtil.setLocationCallBacks(this);
     }
 
@@ -138,7 +133,5 @@ public class VenuesViewModel extends ViewModel
         isConnected.setValue(NetworkUtils.isConnected());
         if (isConnected.getValue())
             fetchPlaces(location);
-        else
-            isFirstRequest.setValue(false);
     }
 }
